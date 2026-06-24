@@ -1,8 +1,12 @@
 import { useState } from 'react'
 import PlaceholderVisual from '../PlaceholderVisual.jsx'
 import TrainingSim from '../games/TrainingSim.jsx'
+import GuessNextWord from '../games/GuessNextWord.jsx'
+import EmbeddingsMap from '../games/EmbeddingsMap.jsx'
+import PromptSandbox from '../games/PromptSandbox.jsx'
+import HallucinationSpot from '../games/HallucinationSpot.jsx'
 
-const GAME_MAP = { TrainingSim }
+const GAME_MAP = { TrainingSim, GuessNextWord, EmbeddingsMap, PromptSandbox, HallucinationSpot }
 
 export default function SeePhase({ see, onComplete }) {
   const [gameComplete, setGameComplete] = useState(!see.gameComponent)
@@ -19,8 +23,6 @@ export default function SeePhase({ see, onComplete }) {
     setRevealed(false)
   }
 
-  const startObs = () => setPhase('obs')
-
   if (phase === 'game') {
     const GameComp = GAME_MAP[see.gameComponent]
     return (
@@ -32,9 +34,9 @@ export default function SeePhase({ see, onComplete }) {
         <button
           className="btn btn-primary btn-lg"
           disabled={!gameComplete}
-          onClick={startObs}
+          onClick={() => setPhase('obs')}
         >
-          {gameComplete ? 'המשך לתצפיות ←' : '← השלם/י את המשחק תחילה'}
+          {gameComplete ? 'המשך לתצפיות ←' : 'השלם/י את הפעילות תחילה'}
         </button>
       </div>
     )
