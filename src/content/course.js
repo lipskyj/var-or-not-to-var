@@ -66,7 +66,7 @@ const unit1 = {
   },
 
   see: {
-    gameComponent: null,
+    gameComponent: 'AIorNotQuiz',
     observations: [
       {
         id: 's1', title: 'Waze — מה ה-AI רואה?',
@@ -1049,7 +1049,7 @@ const unit9 = {
   },
 
   see: {
-    gameComponent: null,
+    gameComponent: 'PromptBuilder',
     observations: [
       {
         id: 's1', title: 'אותו prompt — שלושה מודלים',
@@ -1426,7 +1426,7 @@ const unit12 = {
   },
 
   see: {
-    gameComponent: null,
+    gameComponent: 'AIQuizShow',
     observations: [
       {
         id: 's1', title: 'פרויקט לדוגמה: מזהה מצב-רוח',

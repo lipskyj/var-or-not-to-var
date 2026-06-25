@@ -7,8 +7,11 @@ import PromptSandbox from '../games/PromptSandbox.jsx'
 import HallucinationSpot from '../games/HallucinationSpot.jsx'
 import DragMatchGame from '../games/DragMatchGame.jsx'
 import SentimentMeter from '../games/SentimentMeter.jsx'
+import AIorNotQuiz from '../games/AIorNotQuiz.jsx'
+import PromptBuilder from '../games/PromptBuilder.jsx'
+import AIQuizShow from '../games/AIQuizShow.jsx'
 
-const GAME_MAP = { TrainingSim, GuessNextWord, EmbeddingsMap, PromptSandbox, HallucinationSpot, DragMatchGame, SentimentMeter }
+const GAME_MAP = { TrainingSim, GuessNextWord, EmbeddingsMap, PromptSandbox, HallucinationSpot, DragMatchGame, SentimentMeter, AIorNotQuiz, PromptBuilder, AIQuizShow }
 
 export default function SeePhase({ see, onComplete }) {
   const [gameComplete, setGameComplete] = useState(!see.gameComponent)
