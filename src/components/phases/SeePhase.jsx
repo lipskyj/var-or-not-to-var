@@ -13,8 +13,10 @@ import AIQuizShow from '../games/AIQuizShow.jsx'
 import TokenizerLab from '../games/TokenizerLab.jsx'
 import BiasSwap from '../games/BiasSwap.jsx'
 import PromptArena from '../games/PromptArena.jsx'
+import DataSwipe from '../games/DataSwipe.jsx'
+import WordSort from '../games/WordSort.jsx'
 
-const GAME_MAP = { TrainingSim, GuessNextWord, EmbeddingsMap, PromptSandbox, HallucinationSpot, DragMatchGame, SentimentMeter, AIorNotQuiz, PromptBuilder, AIQuizShow, TokenizerLab, BiasSwap, PromptArena }
+const GAME_MAP = { TrainingSim, GuessNextWord, EmbeddingsMap, PromptSandbox, HallucinationSpot, DragMatchGame, SentimentMeter, AIorNotQuiz, PromptBuilder, AIQuizShow, TokenizerLab, BiasSwap, PromptArena, DataSwipe, WordSort }
 
 export default function SeePhase({ see, onComplete }) {
   const [gameComplete, setGameComplete] = useState(!see.gameComponent)

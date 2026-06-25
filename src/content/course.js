@@ -460,7 +460,7 @@ const unit4 = {
   },
 
   see: {
-    gameComponent: 'EmbeddingsMap',
+    gameComponent: 'WordSort',
     observations: [
       {
         id: 's1', title: 'word2vec — הניסוי המפורסם',
@@ -554,7 +554,7 @@ const unit5 = {
   },
 
   see: {
-    gameComponent: 'TrainingSim',
+    gameComponent: 'DataSwipe',
     observations: [
       { id: 's1', title: 'מודל עם אימון טוב', visual: { type: 'placeholder', prompt: 'Screenshot mockup of Google Teachable Machine with 3 trained classes (שמח, ניטרלי, מופתע), 80 samples each, preview showing 95% confidence on שמח.', searchQuery: 'Teachable Machine trained model high accuracy screenshot', alt: 'מסך Teachable Machine — 95% דיוק' }, question: 'כמה דוגמאות יש לכל קטגוריה?', reveal: '80 דוגמאות לכל קטגוריה — מגוונות, מזוויות שונות.' },
       { id: 's2', title: 'מודל עם אימון חלש', visual: { type: 'placeholder', prompt: 'Screenshot mockup of Teachable Machine with 3 classes: 5, 3, 2 samples. Preview shows fist misclassified as thumb-up 61%.', searchQuery: 'machine learning few training examples misclassification', alt: 'מסך Teachable Machine — 61% טעות' }, question: 'למה המודל מתבלבל?', reveal: 'מעט מדי דוגמאות ואין מגוון. המחשב לא ראה מספיק.' },
