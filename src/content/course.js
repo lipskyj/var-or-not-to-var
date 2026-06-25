@@ -328,7 +328,7 @@ const unit3 = {
   },
 
   see: {
-    gameComponent: 'GuessNextWord',
+    gameComponent: 'TokenizerLab',
     observations: [
       {
         id: 's1', title: 'תהליך האימון — מה קורה בפנים?',
@@ -922,7 +922,7 @@ const unit8 = {
   },
 
   see: {
-    gameComponent: 'PromptSandbox',
+    gameComponent: 'PromptArena',
     observations: [
       {
         id: 's1', title: 'שדרוג בשלושה סיבובים',
@@ -1301,7 +1301,7 @@ const unit11 = {
   },
 
   see: {
-    gameComponent: 'SentimentMeter',
+    gameComponent: 'BiasSwap',
     observations: [
       {
         id: 's1', title: 'הטיה בזיהוי פנים',

@@ -10,8 +10,11 @@ import SentimentMeter from '../games/SentimentMeter.jsx'
 import AIorNotQuiz from '../games/AIorNotQuiz.jsx'
 import PromptBuilder from '../games/PromptBuilder.jsx'
 import AIQuizShow from '../games/AIQuizShow.jsx'
+import TokenizerLab from '../games/TokenizerLab.jsx'
+import BiasSwap from '../games/BiasSwap.jsx'
+import PromptArena from '../games/PromptArena.jsx'
 
-const GAME_MAP = { TrainingSim, GuessNextWord, EmbeddingsMap, PromptSandbox, HallucinationSpot, DragMatchGame, SentimentMeter, AIorNotQuiz, PromptBuilder, AIQuizShow }
+const GAME_MAP = { TrainingSim, GuessNextWord, EmbeddingsMap, PromptSandbox, HallucinationSpot, DragMatchGame, SentimentMeter, AIorNotQuiz, PromptBuilder, AIQuizShow, TokenizerLab, BiasSwap, PromptArena }
 
 export default function SeePhase({ see, onComplete }) {
   const [gameComplete, setGameComplete] = useState(!see.gameComponent)
