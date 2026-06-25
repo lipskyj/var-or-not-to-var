@@ -21,10 +21,21 @@ export default function PlaceholderVisual({ visual }) {
     return <BiasDiagram alt={visual.alt} />
   }
 
+  const query = encodeURIComponent(visual.searchQuery || visual.alt || 'artificial intelligence')
   return (
-    <div className="placeholder-visual">
-      <div className="ph-icon">🖼️</div>
-      <div className="ph-label">{visual.alt}</div>
+    <div style={{ width: '100%' }}>
+      <img
+        src={`https://source.unsplash.com/800x400/?${query}`}
+        alt={visual.alt}
+        style={{ width: '100%', borderRadius: 'var(--radius-s)', display: 'block', objectFit: 'cover', maxHeight: 280 }}
+        loading="lazy"
+        onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex' }}
+      />
+      <div className="placeholder-visual" style={{ display: 'none' }}>
+        <div className="ph-icon">🖼️</div>
+        <div className="ph-label">{visual.alt}</div>
+      </div>
+      <p style={{ marginTop: '0.4rem', fontSize: '0.75rem', color: 'var(--c-muted)', textAlign: 'center' }}>{visual.alt}</p>
     </div>
   )
 }
