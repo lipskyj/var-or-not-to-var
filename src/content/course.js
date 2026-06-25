@@ -1301,7 +1301,7 @@ const unit11 = {
   },
 
   see: {
-    gameComponent: null,
+    gameComponent: 'SentimentMeter',
     observations: [
       {
         id: 's1', title: 'הטיה בזיהוי פנים',

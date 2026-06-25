@@ -1,5 +1,11 @@
 import { useState } from 'react'
 
+const EXAMPLES = [
+  { label: '🧑‍🏫 מורה', role: 'מורה לביולוגיה לכיתה ז׳', task: 'הסבר איך הלב עובד', format: '3 נקודות קצרות' },
+  { label: '🎭 סטנדאפ', role: 'קומיקאי סטנדאפ', task: 'ספר על שיעורי בית', format: 'משפט קצר ומצחיק' },
+  { label: '🧑‍🍳 שף', role: 'שף אוכל ים תיכוני', task: 'הסבר על חומוס', format: 'רשימת מרכיבים' },
+]
+
 function buildResponse(role, task, format) {
   if (!task.trim()) return null
 
@@ -69,9 +75,28 @@ export default function PromptSandbox({ onComplete }) {
   return (
     <div className="card" style={{ maxWidth: 520, margin: '0 auto' }}>
       <h3 style={{ marginBottom: '0.25rem' }}>✏️ ארגז ה-Prompt</h3>
-      <p style={{ color: 'var(--c-muted)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
-        מלא/י שדה אחד ← לחץ/י שלח ← שנה/י שדה ← שלח שוב. ראה/י כיצד התשובה משתנה.
+      <p style={{ color: 'var(--c-muted)', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
+        מלא/י שדה אחד ← שלח ← שנה/י שדה ← שלח שוב. ראה/י כיצד התשובה משתנה.
       </p>
+
+      {/* Quick examples */}
+      <div style={{ marginBottom: '1rem' }}>
+        <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--c-muted)', marginBottom: '0.4rem', letterSpacing: '0.05em' }}>
+          דוגמאות מהירות ↓
+        </div>
+        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+          {EXAMPLES.map(ex => (
+            <button
+              key={ex.label}
+              className="btn btn-outline btn-sm"
+              style={{ fontSize: '0.8rem' }}
+              onClick={() => { setRole(ex.role); setTask(ex.task); setFormat(ex.format); setResponse(null) }}
+            >
+              {ex.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {field('🎭 תפקיד (Role)', 'מי ה-AI? מה ה"אישיות" שלו?', role, setRole, 'לדוגמה: "מדריך טיול" או "מורה לביולוגיה"')}
       {field('📋 משימה (Task)', 'מה אתה/ן רוצה שה-AI יעשה?', task, setTask, 'לדוגמה: "הסבר על ירושלים"')}

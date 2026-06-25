@@ -6,8 +6,9 @@ import EmbeddingsMap from '../games/EmbeddingsMap.jsx'
 import PromptSandbox from '../games/PromptSandbox.jsx'
 import HallucinationSpot from '../games/HallucinationSpot.jsx'
 import DragMatchGame from '../games/DragMatchGame.jsx'
+import SentimentMeter from '../games/SentimentMeter.jsx'
 
-const GAME_MAP = { TrainingSim, GuessNextWord, EmbeddingsMap, PromptSandbox, HallucinationSpot, DragMatchGame }
+const GAME_MAP = { TrainingSim, GuessNextWord, EmbeddingsMap, PromptSandbox, HallucinationSpot, DragMatchGame, SentimentMeter }
 
 export default function SeePhase({ see, onComplete }) {
   const [gameComplete, setGameComplete] = useState(!see.gameComponent)

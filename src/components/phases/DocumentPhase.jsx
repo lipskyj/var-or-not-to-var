@@ -1,6 +1,33 @@
 import { useState } from 'react'
 import { saveSubmission, markUnitComplete } from '../../storage.js'
 
+const CONFETTI_EMOJIS = ['🎉','✨','🌟','💜','🎊','💫','🔥','🎯']
+
+function ConfettiBurst() {
+  const pieces = Array.from({ length: 18 }, (_, i) => i)
+  return (
+    <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+      {pieces.map(i => (
+        <span key={i} style={{
+          position: 'absolute',
+          left: `${5 + (i * 5.5) % 90}%`,
+          top: '-1rem',
+          fontSize: '1.2rem',
+          animation: `confettiFall ${1.2 + (i % 4) * 0.3}s ease-in ${(i % 6) * 0.1}s both`,
+        }}>
+          {CONFETTI_EMOJIS[i % CONFETTI_EMOJIS.length]}
+        </span>
+      ))}
+      <style>{`
+        @keyframes confettiFall {
+          0%   { transform: translateY(0) rotate(0deg) scale(0); opacity: 1; }
+          100% { transform: translateY(300px) rotate(720deg) scale(1); opacity: 0; }
+        }
+      `}</style>
+    </div>
+  )
+}
+
 export default function DocumentPhase({ unit, document: doc, onComplete }) {
   const [reflection, setReflection] = useState('')
   const [screenshot, setScreenshot] = useState(null)
@@ -36,10 +63,13 @@ export default function DocumentPhase({ unit, document: doc, onComplete }) {
 
   if (submitted) {
     return (
-      <div style={{ textAlign: 'center', padding: '2rem' }}>
-        <div style={{ fontSize: '4rem', marginBottom: '0.5rem' }}>🎉</div>
-        <h2>כל הכבוד! סיימת/ת את היחידה.</h2>
-        <p style={{ color: 'var(--c-muted)', marginTop: '0.5rem' }}>היחידה הבאה נפתחה.</p>
+      <div style={{ textAlign: 'center', padding: '2rem', position: 'relative', overflow: 'hidden' }}>
+        <ConfettiBurst />
+        <div style={{ fontSize: '4rem', marginBottom: '0.5rem', animation: 'float 1s ease-in-out 2' }}>🎉</div>
+        <h2 style={{ background: 'var(--grad)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+          כל הכבוד! סיימת/ת את היחידה.
+        </h2>
+        <p style={{ color: 'var(--c-muted)', marginTop: '0.5rem' }}>היחידה הבאה נפתחה ✨</p>
       </div>
     )
   }
