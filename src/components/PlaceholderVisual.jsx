@@ -63,24 +63,6 @@ export default function PlaceholderVisual({ visual }) {
   )
 }
 
-  const query = encodeURIComponent(visual.searchQuery || visual.alt || 'artificial intelligence')
-  return (
-    <div style={{ width: '100%' }}>
-      <img
-        src={`https://source.unsplash.com/800x400/?${query}`}
-        alt={visual.alt}
-        style={{ width: '100%', borderRadius: 'var(--radius-s)', display: 'block', objectFit: 'cover', maxHeight: 280 }}
-        loading="lazy"
-        onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex' }}
-      />
-      <div className="placeholder-visual" style={{ display: 'none' }}>
-        <div className="ph-icon">🖼️</div>
-        <div className="ph-label">{visual.alt}</div>
-      </div>
-    </div>
-  )
-}
-
 function BiasDiagram({ alt }) {
   return (
     <div className="bias-diagram" aria-label={alt}>
