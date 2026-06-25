@@ -35,7 +35,6 @@ export default function PlaceholderVisual({ visual }) {
         <div className="ph-icon">🖼️</div>
         <div className="ph-label">{visual.alt}</div>
       </div>
-      <p style={{ marginTop: '0.4rem', fontSize: '0.75rem', color: 'var(--c-muted)', textAlign: 'center' }}>{visual.alt}</p>
     </div>
   )
 }
