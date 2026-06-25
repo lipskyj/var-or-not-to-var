@@ -58,7 +58,7 @@ export default function HomeScreen({ units, progress, onSelectUnit }) {
         <div className="unit-grid">
           {units.map((unit, i) => {
             const isComplete = progress[unit.id]?.phase === 'complete'
-            const isUnlocked = i === 0 || progress[units[i - 1].id]?.phase === 'complete'
+            const isUnlocked = true
             const inProgress = !isComplete && !!progress[unit.id]?.phase
             const grad = isComplete
               ? 'linear-gradient(135deg,#065f46,#047857)'

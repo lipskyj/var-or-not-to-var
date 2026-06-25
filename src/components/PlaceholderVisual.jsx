@@ -25,11 +25,6 @@ export default function PlaceholderVisual({ visual }) {
     <div className="placeholder-visual">
       <div className="ph-icon">🖼️</div>
       <div className="ph-label">{visual.alt}</div>
-      <details>
-        <summary>💡 הוראות לבוני הקורס</summary>
-        <p style={{ marginTop: '0.5rem', color: 'var(--c-muted)' }}><strong>Prompt:</strong> {visual.prompt}</p>
-        <p style={{ marginTop: '0.5rem', color: 'var(--c-muted)' }}><strong>חיפוש:</strong> {visual.searchQuery}</p>
-      </details>
     </div>
   )
 }
