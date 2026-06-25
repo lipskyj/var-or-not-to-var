@@ -5,8 +5,9 @@ import GuessNextWord from '../games/GuessNextWord.jsx'
 import EmbeddingsMap from '../games/EmbeddingsMap.jsx'
 import PromptSandbox from '../games/PromptSandbox.jsx'
 import HallucinationSpot from '../games/HallucinationSpot.jsx'
+import DragMatchGame from '../games/DragMatchGame.jsx'
 
-const GAME_MAP = { TrainingSim, GuessNextWord, EmbeddingsMap, PromptSandbox, HallucinationSpot }
+const GAME_MAP = { TrainingSim, GuessNextWord, EmbeddingsMap, PromptSandbox, HallucinationSpot, DragMatchGame }
 
 export default function SeePhase({ see, onComplete }) {
   const [gameComplete, setGameComplete] = useState(!see.gameComponent)
@@ -25,12 +26,13 @@ export default function SeePhase({ see, onComplete }) {
 
   if (phase === 'game') {
     const GameComp = GAME_MAP[see.gameComponent]
+    const gameProps = see.gameProps || {}
     return (
       <div className="stack" style={{ '--gap': '1.25rem', padding: '0.5rem 0' }}>
         <p style={{ textAlign: 'center', color: 'var(--c-muted)', fontSize: '0.9rem' }}>
           לפני שנראה את הכלי האמיתי — נרגיש את הרעיון בעצמנו.
         </p>
-        {GameComp && <GameComp onComplete={() => setGameComplete(true)} />}
+        {GameComp && <GameComp {...gameProps} onComplete={() => setGameComplete(true)} />}
         <button
           className="btn btn-primary btn-lg"
           disabled={!gameComplete}
@@ -54,14 +56,14 @@ export default function SeePhase({ see, onComplete }) {
 
   return (
     <div className="stack" style={{ '--gap': '1.25rem', padding: '0.5rem 0' }}>
-      <div style={{ textAlign: 'center', color: 'var(--c-muted)', fontSize: '0.8rem' }}>
+      <span className="pill-counter" style={{ alignSelf: 'center' }}>
         תצפית {obsIdx + 1} / {see.observations.length}
-      </div>
+      </span>
 
       <div className="obs-card card">
         <h3 style={{ marginBottom: '1rem' }}>👀 {obs.title}</h3>
 
-        <div className="obs-visual">
+        <div className="obs-visual" style={{ padding: obs.visual?.type === 'youtube' ? '0' : undefined, border: obs.visual?.type === 'youtube' ? 'none' : undefined, background: obs.visual?.type === 'youtube' ? 'transparent' : undefined }}>
           <PlaceholderVisual visual={obs.visual} />
         </div>
 

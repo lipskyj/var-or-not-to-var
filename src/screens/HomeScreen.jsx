@@ -1,43 +1,68 @@
 import CompetencyTag from '../components/CompetencyTag.jsx'
 
-export default function HomeScreen({ units, progress, submissions, onSelectUnit }) {
-  const unitIds = units.map(u => u.id)
-  const totalComplete = unitIds.filter(id => progress[id]?.phase === 'complete').length
+const UNIT_GRADIENTS = [
+  'linear-gradient(135deg,#4f46e5,#7c3aed)',
+  'linear-gradient(135deg,#db2777,#9333ea)',
+  'linear-gradient(135deg,#0284c7,#0891b2)',
+  'linear-gradient(135deg,#059669,#0d9488)',
+  'linear-gradient(135deg,#d97706,#dc2626)',
+  'linear-gradient(135deg,#7c3aed,#2563eb)',
+  'linear-gradient(135deg,#be185d,#9333ea)',
+  'linear-gradient(135deg,#0369a1,#0891b2)',
+  'linear-gradient(135deg,#065f46,#0d9488)',
+  'linear-gradient(135deg,#92400e,#b45309)',
+  'linear-gradient(135deg,#6d28d9,#db2777)',
+  'linear-gradient(135deg,#1d4ed8,#4f46e5)',
+]
+
+export default function HomeScreen({ units, progress, onSelectUnit }) {
+  const totalComplete = units.filter(u => progress[u.id]?.phase === 'complete').length
   const pct = Math.round((totalComplete / units.length) * 100)
 
   return (
-    <div style={{ paddingBottom: '3rem' }}>
+    <div style={{ paddingBottom: '4rem' }}>
       {/* Hero */}
-      <div style={{
-        background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
-        color: '#fff', padding: '2.5rem 1rem 2rem', textAlign: 'center',
-      }}>
+      <div className="hero">
         <div className="container">
-          <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🤖</div>
-          <h1 style={{ color: '#fff' }}>AI בשבילי</h1>
-          <p style={{ opacity: 0.85, marginTop: '0.4rem', fontSize: '1.05rem' }}>
+          <div className="hero-emoji">🤖</div>
+          <h1>AI בשבילי</h1>
+          <p style={{ color: 'rgba(255,255,255,0.6)', marginTop: '0.4rem', fontSize: '1rem' }}>
             קורס אוריינות בינה מלאכותית — כיתה ז׳
           </p>
-          <div style={{ marginTop: '1.5rem', maxWidth: 320, margin: '1.5rem auto 0' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', opacity: 0.85, marginBottom: '0.4rem' }}>
+
+          {/* Progress */}
+          <div style={{ maxWidth: 320, margin: '1.75rem auto 0' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }}>
               <span>ההתקדמות שלי</span>
-              <span>{totalComplete} / {units.length} יחידות</span>
+              <span style={{ color: '#c084fc', fontWeight: 700 }}>{totalComplete} / {units.length}</span>
             </div>
-            <div className="progress-bar-track" style={{ background: 'rgba(255,255,255,0.3)' }}>
-              <div className="progress-bar-fill" style={{ width: `${pct}%`, background: '#a5f3fc' }} />
+            <div className="progress-bar-track">
+              <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
             </div>
+            {totalComplete > 0 && (
+              <p style={{ textAlign: 'center', marginTop: '0.5rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)' }}>
+                {pct}% הושלם — {totalComplete === units.length ? '🎉 סיימת את הקורס!' : 'המשך/י כך!'}
+              </p>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Unit list */}
-      <div className="container" style={{ marginTop: '1.5rem' }}>
-        <h2 style={{ marginBottom: '1rem' }}>יחידות הקורס</h2>
-        <div className="stack" style={{ '--gap': '0.75rem' }}>
+      {/* Unit grid */}
+      <div className="container">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '1.75rem', marginBottom: '0.25rem' }}>
+          <h2 style={{ flex: 1 }}>יחידות הקורס</h2>
+          <span className="pill-counter">{units.length} יחידות</span>
+        </div>
+
+        <div className="unit-grid">
           {units.map((unit, i) => {
             const isComplete = progress[unit.id]?.phase === 'complete'
             const isUnlocked = i === 0 || progress[units[i - 1].id]?.phase === 'complete'
-            const inProgress = !isComplete && progress[unit.id]?.phase
+            const inProgress = !isComplete && !!progress[unit.id]?.phase
+            const grad = isComplete
+              ? 'linear-gradient(135deg,#065f46,#047857)'
+              : UNIT_GRADIENTS[i % UNIT_GRADIENTS.length]
 
             return (
               <div
@@ -49,19 +74,27 @@ export default function HomeScreen({ units, progress, submissions, onSelectUnit 
                 onKeyDown={e => e.key === 'Enter' && isUnlocked && onSelectUnit(unit.id)}
                 aria-label={`יחידה ${i + 1}: ${unit.title}${!isUnlocked ? ' (נעולה)' : ''}`}
               >
-                <div>
-                  <div className="unit-num">יחידה {i + 1}</div>
-                  <div className="unit-emoji">{unit.emoji}</div>
-                </div>
-                <div className="unit-info">
-                  <div className="unit-title">{unit.title}</div>
-                  <div className="unit-summary">{unit.summary}</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', marginTop: '0.4rem' }}>
-                    {unit.competencies.map(c => <CompetencyTag key={c} type={c} />)}
+                {/* Colored header */}
+                <div className="unit-card-header" style={{ background: grad }}>
+                  <div>
+                    <div className="unit-num">יחידה {i + 1}</div>
+                    <div className="unit-emoji" style={{ marginTop: '0.15rem' }}>{unit.emoji}</div>
+                  </div>
+                  <div className="unit-status" style={{ fontSize: '1.4rem' }}>
+                    {!isUnlocked ? '🔒' : isComplete ? '✅' : inProgress ? '▶️' : ''}
                   </div>
                 </div>
-                <div className="unit-status">
-                  {!isUnlocked ? '🔒' : isComplete ? '✅' : inProgress ? '▶️' : '○'}
+
+                {/* Body */}
+                <div className="unit-card-body">
+                  <div className="unit-title">{unit.title}</div>
+                  <div className="unit-summary" style={{ marginTop: '0.3rem' }}>{unit.summary}</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', marginTop: '0.6rem' }}>
+                    {unit.competencies.map(c => <CompetencyTag key={c} type={c} />)}
+                  </div>
+                  <div style={{ marginTop: '0.6rem', fontSize: '0.72rem', color: 'var(--c-muted)' }}>
+                    ⏱ {unit.duration}
+                  </div>
                 </div>
               </div>
             )

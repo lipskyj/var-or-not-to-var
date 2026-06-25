@@ -200,10 +200,10 @@ const unit2 = {
     gameComponent: 'GuessNextWord',
     observations: [
       {
-        id: 's1', title: 'מסווג תמונות בפעולה',
-        visual: { type: 'placeholder', prompt: 'Diagram showing image classifier: cat photo input → neural network layers → output "חתול 98%" in Hebrew. Clean ML diagram.', searchQuery: 'image classification neural network cat diagram CNN', alt: 'דיאגרמה: תמונת חתול → רשת נוירונים → "חתול 98%"' },
-        question: 'המסווג לא "יודע" מה זה חתול. אז איך הוא מזהה?',
-        reveal: 'הוא ראה מאות אלפי תמונות של חתולים עם התווית "חתול". למד: "אוזניים מחודדות + פרווה + עיניים אלכסוניות" = חתול. לא הבנה — דפוסים.',
+        id: 's1', title: 'איך רשת נוירונים לומדת? (סרטון קצר)',
+        visual: { type: 'youtube', videoId: 'aircAruvnKk', alt: '3Blue1Brown — "אבל מהי רשת נוירונים?" (אנגלית עם כתוביות)' },
+        question: 'הסרטון מראה שהרשת מזהה ספרות. איך היא "רואה" תמונה?',
+        reveal: 'הרשת מפרקת כל תמונה לפיקסלים — כל פיקסל הוא מספר. אחר כך שכבות של "נוירונים" מחפשות דפוסים: קצוות → צורות → ספרה. לא הבנה — מתמטיקה.',
       },
       {
         id: 's2', title: 'מנוע המלצות YouTube',
@@ -643,7 +643,15 @@ const unit6 = {
   },
 
   see: {
-    gameComponent: null,
+    gameComponent: 'DragMatchGame',
+    gameProps: {
+      pairs: [
+        { id: 'cw', term: 'חלון הקשר', definition: 'הכמות המקסימלית של טקסט שה-AI יכול לקרוא בבת אחת' },
+        { id: 'ctx', term: 'הקשר (Context)', definition: 'כל המידע שה-AI קיבל לפני שהוא כותב את תשובתו' },
+        { id: 'sp', term: 'System Prompt', definition: 'הוראות קבועות שמגדירות את אישיות ה-AI לפני תחילת השיחה' },
+        { id: 'tok', term: 'Token', definition: 'יחידת הטקסט הקטנה ביותר שה-AI מעבד — בערך ¾ מילה' },
+      ],
+    },
     observations: [
       {
         id: 's1', title: 'אותה שאלה — שני הקשרים שונים',

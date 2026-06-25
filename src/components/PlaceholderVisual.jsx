@@ -1,15 +1,34 @@
 export default function PlaceholderVisual({ visual }) {
+  if (visual.type === 'youtube') {
+    return (
+      <div style={{ width: '100%' }}>
+        <div className="yt-wrapper">
+          <iframe
+            src={`https://www.youtube.com/embed/${visual.videoId}?rel=0&modestbranding=1&hl=he`}
+            title={visual.alt}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+        <p style={{ marginTop: '0.5rem', fontSize: '0.78rem', color: 'var(--c-muted)', textAlign: 'center' }}>
+          🎬 {visual.alt}
+        </p>
+      </div>
+    )
+  }
+
   if (visual.type === 'diagram' && visual.diagramKey === 'bias') {
     return <BiasDiagram alt={visual.alt} />
   }
+
   return (
     <div className="placeholder-visual">
       <div className="ph-icon">🖼️</div>
       <div className="ph-label">{visual.alt}</div>
       <details>
         <summary>💡 הוראות לבוני הקורס</summary>
-        <p style={{ marginTop: '0.5rem' }}><strong>Prompt לייצור:</strong> {visual.prompt}</p>
-        <p style={{ marginTop: '0.5rem' }}><strong>חיפוש:</strong> {visual.searchQuery}</p>
+        <p style={{ marginTop: '0.5rem', color: 'var(--c-muted)' }}><strong>Prompt:</strong> {visual.prompt}</p>
+        <p style={{ marginTop: '0.5rem', color: 'var(--c-muted)' }}><strong>חיפוש:</strong> {visual.searchQuery}</p>
       </details>
     </div>
   )
