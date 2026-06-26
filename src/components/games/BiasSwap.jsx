@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { askGemini } from '../../api/gemini.js'
 
 const SCENARIOS = [
   {
@@ -46,7 +47,7 @@ const SCENARIOS = [
       name_en: '"Emily has great potential and leadership qualities. Will definitely consider."',
       name_ar: '"פאטמה עובדת קשה, אבל צריכה לשפר את כישורי התקשורת שלה."',
     },
-    insight: 'שם = זהות תרבותית. ה-AI הפיק תגובות שונות לאותו בקשה רק בגלל השם. זה המחיש כיצד הטיה בנתוני אימון → הטיה בתוצאות.',
+    insight: 'שם = זהות תרבותית. ה-AI הפיק תגובות שונות לאותה בקשה רק בגלל השם. זה המחיש כיצד הטיה בנתוני אימון → הטיה בתוצאות.',
   },
 ]
 
@@ -57,9 +58,28 @@ export default function BiasSwap({ onComplete }) {
   const [selected, setSelected] = useState(null)
   const [revealed, setRevealed] = useState(false)
   const [seen, setSeen] = useState(0)
+  const [aiText, setAiText] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const scene = SCENARIOS[sceneIdx]
   const isLast = sceneIdx === SCENARIOS.length - 1
+
+  useEffect(() => {
+    if (!selected) { setAiText(null); return }
+    let live = true
+    setLoading(true)
+    setAiText(null)
+    const prompt = `השלם את המשפט הבא בעברית, ציטוט ישיר של מה שנאמר, 1-2 משפטים בלבד:\n"${scene.templateBefore}${selected.text}${scene.templateAfter}"`
+    askGemini(prompt, {
+      system: 'אתה משלים משפטים בעברית. כתוב רק ציטוט ישיר — מה הדמות אמרה, בגרשיים. ללא הסברים נוספים.',
+      maxTokens: 80,
+      temperature: 0.9,
+    })
+      .then(t => { if (live) setAiText(t) })
+      .catch(() => { if (live) setAiText(scene.completions[selected.id]) })
+      .finally(() => { if (live) setLoading(false) })
+    return () => { live = false }
+  }, [selected?.id, sceneIdx])
 
   const pick = (opt) => {
     setSelected(opt)
@@ -89,7 +109,6 @@ export default function BiasSwap({ onComplete }) {
         שנה/י <strong>מילה אחת</strong> במשפט ← ראה/י איך ה-AI ממשיך אחרת. זו הטיה.
       </p>
 
-      {/* Scene counter */}
       <div style={{ display: 'flex', gap: '0.35rem', marginBottom: '1rem' }}>
         {SCENARIOS.map((s, i) => (
           <div key={s.id} style={{
@@ -99,12 +118,10 @@ export default function BiasSwap({ onComplete }) {
         ))}
       </div>
 
-      {/* Topic pill */}
       <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#a855f7', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>
         📍 {scene.topic}
       </div>
 
-      {/* Sentence builder */}
       <div style={{ background: 'var(--c-bg)', borderRadius: 'var(--radius-s)', padding: '1rem', border: '2px solid var(--c-border)', marginBottom: '0.75rem', fontSize: '1rem', lineHeight: 2, textAlign: 'right' }}>
         <span>{scene.templateBefore}</span>
         {scene.swappable.map((opt, i) => (
@@ -127,31 +144,32 @@ export default function BiasSwap({ onComplete }) {
         <span>{scene.templateAfter}</span>
       </div>
 
-      {/* Swap instruction */}
       {!selected && (
         <div style={{ textAlign: 'center', color: 'var(--c-muted)', fontSize: '0.85rem', marginBottom: '0.75rem', animation: 'float 2s ease-in-out infinite' }}>
           ↑ לחץ/י על אחת המילות המסגרת ↑
         </div>
       )}
 
-      {/* AI completion */}
       {selected && (
         <div style={{ animation: 'cardIn 0.3s ease', marginBottom: '0.75rem' }}>
-          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--c-muted)', marginBottom: '0.35rem' }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--c-muted)', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             🤖 ה-AI ממשיך כך:
+            {loading && <span style={{ fontSize: '0.65rem', color: '#a855f7', animation: 'float 1s ease-in-out infinite' }}>● ● ●</span>}
           </div>
           <div style={{
             background: 'rgba(168,85,247,0.07)', borderRadius: 'var(--radius-s)',
             padding: '0.85rem 1rem', border: '1px solid rgba(168,85,247,0.25)',
             fontSize: '0.95rem', lineHeight: 1.7, fontStyle: 'italic',
+            minHeight: '3.5rem',
           }}>
-            {scene.completions[selected.id]}
+            {loading
+              ? <span style={{ opacity: 0.4 }}>⏳ ה-AI מייצר תגובה...</span>
+              : (aiText || scene.completions[selected.id])}
           </div>
 
-          {/* Compare button — show after first selection */}
-          {scene.swappable.length > 1 && (
+          {!loading && scene.swappable.length > 1 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.5rem' }}>
-              {scene.swappable.filter(o => o.id !== selected.id).map((opt, i) => (
+              {scene.swappable.filter(o => o.id !== selected.id).map((opt) => (
                 <button
                   key={opt.id}
                   className="btn btn-outline btn-sm"
@@ -166,7 +184,7 @@ export default function BiasSwap({ onComplete }) {
         </div>
       )}
 
-      {selected && !revealed && (
+      {selected && !loading && !revealed && (
         <button className="btn btn-outline" onClick={reveal} style={{ width: '100%', marginBottom: '0.5rem' }}>
           מה המסקנה? ←
         </button>

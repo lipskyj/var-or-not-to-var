@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { askGemini } from '../../api/gemini.js'
 
 const EXAMPLES = [
   { label: '🧑‍🏫 מורה', role: 'מורה לביולוגיה לכיתה ז׳', task: 'הסבר איך הלב עובד', format: '3 נקודות קצרות' },
@@ -6,62 +7,45 @@ const EXAMPLES = [
   { label: '🧑‍🍳 שף', role: 'שף אוכל ים תיכוני', task: 'הסבר על חומוס', format: 'רשימת מרכיבים' },
 ]
 
-function buildResponse(role, task, format) {
-  if (!task.trim()) return null
-
-  const r = role.trim()
-  const f = format.trim()
-  const hasRole = r.length > 2
-  const hasFormat = f.length > 2
-  const isBullets = f.includes('נקודות') || f.includes('רשימה') || f.includes('bullet')
-  const isShort = f.includes('קצר') || f.includes('משפט')
-
-  // Detect topic from task text
-  let topic = 'הנושא'
-  const t = task.toLowerCase()
-  if (t.includes('ירושלים')) topic = 'ירושלים'
-  else if (t.includes('מחשב') || t.includes('computer')) topic = 'מחשבים'
-  else if (t.includes('ים') || t.includes('חוף')) topic = 'הים התיכון'
-  else if (t.includes('ישראל') || t.includes('israel')) topic = 'ישראל'
-  else if (t.includes('היסטוריה') || t.includes('עתיק')) topic = 'ההיסטוריה'
-  else if (t.includes('חיה') || t.includes('בעל חיים')) topic = 'בעלי החיים'
-
-  if (!hasRole && !hasFormat) {
-    return `${topic} הוא נושא מעניין. יש הרבה דברים לדעת עליו. הוא חשוב מסיבות שונות ויש לו היסטוריה ארוכה.`
-  }
-  if (hasRole && !hasFormat) {
-    return `שלום! אני כאן בתור ${r}. ${topic} הוא נושא שמאוד קרוב לליבי! אשמח לספר לכם עליו — יש כל כך הרבה דברים מרתקים לגלות. יש שאלות?`
-  }
-  if (!hasRole && hasFormat) {
-    if (isBullets) return `• ${topic} — עובדה ראשונה מרכזית\n• ${topic} — עובדה שנייה מעניינת\n• ${topic} — עובדה שלישית שכדאי לדעת`
-    if (isShort) return `${topic} — נושא חשוב עם היסטוריה עשירה ומאפיינים ייחודיים.`
-    return `${topic}:\nנושא מרכזי עם מאפיינים ייחודיים רבים. יש לו חשיבות רבה בחיי היומיום ובהיסטוריה.`
-  }
-  // Both role + format
-  if (isBullets) {
-    return `שלום מ${r}! הנה מה שצריך לדעת על ${topic}:\n\n• נקודה ראשונה — חשובה מאוד ומרתקת\n• נקודה שנייה — מפתיעה וחשובה לדעת\n• נקודה שלישית — שימושית בחיי היומיום\n\nשאלות? אשמח לעזור! 😊`
-  }
-  if (isShort) return `כ${r}: ${topic} — ${task.length > 20 ? task.slice(0, 20) + '...' : task}. בקצרה: נושא חשוב עם השפעה רבה.`
-  return `שלום! כ${r}, אני שמח/ה להסביר לכם על ${topic}. זהו נושא שקרוב מאוד לליבי. ${topic} חשוב מכיוון שהוא משפיע על חיינו בדרכים רבות ומגוונות. אשמח לענות על שאלות נוספות!`
-}
-
 export default function PromptSandbox({ onComplete }) {
   const [role, setRole]     = useState('')
   const [task, setTask]     = useState('')
   const [format, setFormat] = useState('')
   const [response, setResponse] = useState(null)
+  const [loading, setLoading] = useState(false)
   const [tries, setTries]   = useState(0)
   const [history, setHistory] = useState([])
 
-  const submit = () => {
-    const resp = buildResponse(role, task, format)
-    if (!resp) return
-    const entry = { role, task, format, resp }
-    setHistory(h => [entry, ...h].slice(0, 3))
-    setResponse(resp)
-    const n = tries + 1
-    setTries(n)
-    if (n >= 2 && onComplete) onComplete()
+  const submit = async () => {
+    if (!task.trim() || loading) return
+    setLoading(true)
+    setResponse(null)
+
+    const parts = []
+    if (role.trim()) parts.push(`אתה ${role.trim()}.`)
+    parts.push(task.trim())
+    if (format.trim()) parts.push(`ענה בפורמט: ${format.trim()}.`)
+
+    try {
+      const text = await askGemini(parts.join(' '), {
+        system: 'ענה בעברית בלבד. היה ספציפי ושימושי.',
+        maxTokens: 220,
+        temperature: 0.8,
+      })
+      const entry = { role, task, format, resp: text }
+      setHistory(h => [entry, ...h].slice(0, 3))
+      setResponse(text)
+    } catch (err) {
+      setResponse(`⚠️ שגיאה: ${err.message}`)
+    } finally {
+      setLoading(false)
+    }
+
+    setTries(n => {
+      const next = n + 1
+      if (next >= 2 && onComplete) onComplete()
+      return next
+    })
   }
 
   const field = (label, hint, val, set, ph) => (
@@ -79,7 +63,6 @@ export default function PromptSandbox({ onComplete }) {
         מלא/י שדה אחד ← שלח ← שנה/י שדה ← שלח שוב. ראה/י כיצד התשובה משתנה.
       </p>
 
-      {/* Quick examples */}
       <div style={{ marginBottom: '1rem' }}>
         <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--c-muted)', marginBottom: '0.4rem', letterSpacing: '0.05em' }}>
           דוגמאות מהירות ↓
@@ -102,13 +85,24 @@ export default function PromptSandbox({ onComplete }) {
       {field('📋 משימה (Task)', 'מה אתה/ן רוצה שה-AI יעשה?', task, setTask, 'לדוגמה: "הסבר על ירושלים"')}
       {field('📐 פורמט (Format)', 'איך תרצה/י שהתשובה תיראה?', format, setFormat, 'לדוגמה: "3 נקודות קצרות"')}
 
-      <button className="btn btn-primary btn-lg" onClick={submit} disabled={!task.trim()} style={{ marginBottom: '1rem' }}>
-        שלח/י Prompt ←
+      <button
+        className="btn btn-primary btn-lg"
+        onClick={submit}
+        disabled={!task.trim() || loading}
+        style={{ marginBottom: '1rem' }}
+      >
+        {loading ? '⏳ שולח ל-AI...' : 'שלח/י Prompt ←'}
       </button>
 
+      {loading && (
+        <div style={{ textAlign: 'center', color: 'var(--c-muted)', fontSize: '0.85rem', marginBottom: '0.75rem', animation: 'float 1s ease-in-out infinite' }}>
+          🤖 Gemini מעבד את הבקשה...
+        </div>
+      )}
+
       {response && (
-        <div style={{ background: 'var(--c-bg)', borderRadius: 'var(--radius-s)', padding: '1rem', border: '2px solid var(--c-border)', whiteSpace: 'pre-line', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: '0.75rem' }}>
-          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--c-muted)', marginBottom: '0.4rem' }}>תגובת ה-AI (מדומה):</div>
+        <div style={{ background: 'var(--c-bg)', borderRadius: 'var(--radius-s)', padding: '1rem', border: '2px solid var(--c-border)', whiteSpace: 'pre-line', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: '0.75rem', animation: 'cardIn 0.4s ease' }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#a855f7', marginBottom: '0.4rem' }}>תגובת ה-AI:</div>
           {response}
         </div>
       )}
