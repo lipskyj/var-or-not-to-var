@@ -15,8 +15,11 @@ import BiasSwap from '../games/BiasSwap.jsx'
 import PromptArena from '../games/PromptArena.jsx'
 import DataSwipe from '../games/DataSwipe.jsx'
 import WordSort from '../games/WordSort.jsx'
+import SketchGuessGame from '../games/SketchGuessGame.jsx'
+import WordArenaGame from '../games/WordArenaGame.jsx'
+import SelectionSim from '../games/SelectionSim.jsx'
 
-const GAME_MAP = { TrainingSim, GuessNextWord, EmbeddingsMap, PromptSandbox, HallucinationSpot, DragMatchGame, SentimentMeter, AIorNotQuiz, PromptBuilder, AIQuizShow, TokenizerLab, BiasSwap, PromptArena, DataSwipe, WordSort }
+const GAME_MAP = { TrainingSim, GuessNextWord, EmbeddingsMap, PromptSandbox, HallucinationSpot, DragMatchGame, SentimentMeter, AIorNotQuiz, PromptBuilder, AIQuizShow, TokenizerLab, BiasSwap, PromptArena, DataSwipe, WordSort, SketchGuessGame, WordArenaGame, SelectionSim }
 
 export default function SeePhase({ see, onComplete }) {
   const [gameComplete, setGameComplete] = useState(!see.gameComponent)
@@ -72,8 +75,11 @@ export default function SeePhase({ see, onComplete }) {
       <div className="obs-card card">
         <h3 style={{ marginBottom: '1rem' }}>👀 {obs.title}</h3>
 
-        <div className="obs-visual" style={{ padding: obs.visual?.type === 'youtube' ? '0' : undefined, border: obs.visual?.type === 'youtube' ? 'none' : undefined, background: obs.visual?.type === 'youtube' ? 'transparent' : undefined }}>
-          <PlaceholderVisual visual={obs.visual} />
+        <div className="obs-visual" style={{ padding: obs.visual?.type === 'youtube' ? '0' : undefined, border: obs.visual?.type === 'youtube' || obs.visual?.type === 'mini-game' ? 'none' : undefined, background: obs.visual?.type === 'youtube' || obs.visual?.type === 'mini-game' ? 'transparent' : undefined }}>
+          {obs.visual?.type === 'mini-game' ? (() => {
+            const MiniGame = GAME_MAP[obs.visual.gameComponent]
+            return MiniGame ? <MiniGame onComplete={() => {}} /> : null
+          })() : <PlaceholderVisual visual={obs.visual} />}
         </div>
 
         <p className="obs-question">🤔 {obs.question}</p>

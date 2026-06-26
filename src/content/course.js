@@ -349,8 +349,8 @@ const unit3 = {
         reveal: 'פנים מגיעות בגיל, תאורה, זוית, רגש — אינסוף וריאציות. ספאם יש לו מאפיינים ברורים יחסית. מורכבות = דרוש יותר נתונים.',
       },
       {
-        id: 's4', title: 'נסה/י בעצמך: Tiktokenizer',
-        visual: { type: 'external-tool', url: 'https://tiktokenizer.vercel.app', name: 'Tiktokenizer', icon: '✂️', description: 'הכלי הרשמי שמראה איך מודלים כמו GPT-4 חותכים טקסט ל-tokens בפועל. כל צבע = token אחד.', instructions: 'הקלד/י טקסט בעברית ובאנגלית — ראה/י כמה tokens כל מילה שווה. שים/י לב להבדל!', alt: 'Tiktokenizer — כלי המחשה של tokens בזמן אמת' },
+        id: 's4', title: 'מעבדת Tokens — נסה/י בעצמך',
+        visual: { type: 'mini-game', gameComponent: 'TokenizerLab' },
         question: 'כמה tokens צרכה מילה עברית לעומת אנגלית?',
         reveal: 'מילים עבריות לעתים קרובות "עולות" יותר tokens ממילות אנגלית — כי מודלים אומנו על פחות עברית. GPT-4 ראה יותר אנגלית → חתכה לחלקים קטנים יותר. לכן עברית "מוצאת" יותר tokens ממה שנראה.',
       },
@@ -487,8 +487,8 @@ const unit4 = {
         reveal: 'הוא ממיר כל תמונה ל-embedding (מספרים). אחר כך מחפש תמונות עם מספרים קרובים. "קרוב" = "דומה". אין צורך להבין מה יש בתמונה.',
       },
       {
-        id: 's4', title: 'שחק/י Semantris — Word Embeddings בפעולה',
-        visual: { type: 'external-tool', url: 'https://research.google.com/semantris', name: 'Semantris', icon: '🧲', description: 'משחק של Google Research שבנוי על word embeddings אמיתיים. הקלד/י מילה קשורה — המנוע מוצא את המילה הכי קרובה במרחב הווקטורי ומסיר אותה.', instructions: 'שחק/י "Arcade Mode" 2-3 דקות. שים/י לב: איזה סוג מילים עובד הכי טוב?', alt: 'Semantris — משחק word embeddings אמיתי של Google' },
+        id: 's4', title: 'Word Arena — Word Embeddings בפעולה',
+        visual: { type: 'mini-game', gameComponent: 'WordArenaGame' },
         question: 'מה גילית/ת על הדמיון שה-AI "רואה" בין מילים?',
         reveal: 'Semantris משתמש ב-embedding אמיתי. מילים שמופיעות יחד בטקסטים רבים → נחשבות "קרובות". לפעמים זה מפתיע: "מהיר" ו"מכונית" קרובים יותר מ"מהיר" ו"מהירה".',
       },
@@ -572,8 +572,8 @@ const unit5 = {
       { id: 's2', title: 'מודל עם אימון חלש', visual: { type: 'placeholder', prompt: 'Screenshot mockup of Teachable Machine with 3 classes: 5, 3, 2 samples. Preview shows fist misclassified as thumb-up 61%.', searchQuery: 'machine learning few training examples misclassification', alt: 'מסך Teachable Machine — 61% טעות' }, question: 'למה המודל מתבלבל?', reveal: 'מעט מדי דוגמאות ואין מגוון. המחשב לא ראה מספיק.' },
       { id: 's3', title: 'הטיה בנתונים (Bias)', visual: { type: 'diagram', diagramKey: 'bias', alt: 'דיאגרמת הטיה' }, question: 'מה הבעיה כאן?', reveal: 'הנתונים לא מייצגים את המציאות. כשהנתונים מוטים — המודל מוטה.' },
       {
-        id: 's4', title: 'Quick, Draw! — אתה/ן מאמן/ת AI ציור',
-        visual: { type: 'external-tool', url: 'https://quickdraw.withgoogle.com', name: 'Quick, Draw!', icon: '✏️', description: 'כלי של Google שבו אתה/ן מצייר/ת ו-AI מנסה לנחש מה ציירת. כל ציור שלך הופך לדוגמת אימון לדורות הבאים.', instructions: 'שחק/י סיבוב אחד (6 ציורים). שים/י לב: מתי ה-AI מצליח לנחש? מה עוזר לו?', alt: 'Quick Draw — ציור ולמידה של רשת נוירונים בזמן אמת' },
+        id: 's4', title: 'צייר/י — AI מנחש (Sketch Guess)',
+        visual: { type: 'mini-game', gameComponent: 'SketchGuessGame' },
         question: 'מה עזר ל-AI לנחש נכון? מה בלבל אותו?',
         reveal: 'Quick Draw! אומן על 50 מיליון ציורים. הוא מחפש פיצ\'רים מרכזיים — לא ציור "מושלם". מה שבלבל אותו: קו מיותר, זווית לא רגילה, או פרטים שהאנשים בדרך כלל לא מציירים.',
       },
@@ -1340,8 +1340,8 @@ const unit11 = {
         reveal: 'מיקום GPS תמיד, הרגלי גלישה, קניות, אנשי קשר, שעות שינה (מחשמול), דפוסי הקלדה. כל אלה עלולים לשמש לאימון מודלים — ולעיתים נמכרים לצדדים שלישיים.',
       },
       {
-        id: 's4', title: 'חווה הטיה: Survival of the Best Fit',
-        visual: { type: 'external-tool', url: 'https://www.survivalofthebestfit.com', name: 'Survival of the Best Fit', icon: '⚖️', description: 'סימולציה אינטרקטיבית שבה אתה/ן מגייס/ת עובדים ידנית, ואז מאמן/ת AI לעשות זאת — וחווה/ת איך ההטיה שלך הופכת להטיה של המודל.', instructions: 'שחק/י את המשחק עד סוף — כ-10 דקות. שים/י לב: מה ה-AI "למד" מהבחירות שלך?', alt: 'Survival of the Best Fit — סימולציה של הטיה בגיוס AI' },
+        id: 's4', title: 'חווה הטיה: סימולטור ברירה',
+        visual: { type: 'mini-game', gameComponent: 'SelectionSim' },
         question: 'מה ה-AI "למד" לגייס? האם זה מה שרצית?',
         reveal: 'ה-AI למד בדיוק מה שאתה/ן לימדת אותו — כולל הטיות לא מודעות. זו הנקודה: המודל לא בחר להיות מוטה. הוא הפך ל"מראה" של הנתונים שלך.',
       },
