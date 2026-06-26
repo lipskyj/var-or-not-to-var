@@ -1,3 +1,9 @@
+import { useState, useEffect } from 'react'
+import { generateImage } from '../api/gemini.js'
+
+// Session-level cache: prompt → base64 data URL
+const imgCache = new Map()
+
 export default function PlaceholderVisual({ visual }) {
   if (visual.type === 'youtube') {
     return (
@@ -10,9 +16,6 @@ export default function PlaceholderVisual({ visual }) {
             allowFullScreen
           />
         </div>
-        <p style={{ marginTop: '0.5rem', fontSize: '0.78rem', color: 'var(--c-muted)', textAlign: 'center' }}>
-          🎬 {visual.alt}
-        </p>
       </div>
     )
   }
@@ -45,6 +48,66 @@ export default function PlaceholderVisual({ visual }) {
     return <BiasDiagram alt={visual.alt} />
   }
 
+  return <AIIllustration visual={visual} />
+}
+
+function AIIllustration({ visual }) {
+  const prompt = visual.prompt
+  const cached = prompt ? imgCache.get(prompt) : null
+
+  const [src, setSrc] = useState(cached || null)
+  const [loading, setLoading] = useState(!cached && !!prompt)
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    if (!prompt || cached) return
+    let live = true
+    setLoading(true)
+    generateImage(prompt)
+      .then(dataUrl => {
+        imgCache.set(prompt, dataUrl)
+        if (live) { setSrc(dataUrl); setLoading(false) }
+      })
+      .catch(() => {
+        if (live) { setFailed(true); setLoading(false) }
+      })
+    return () => { live = false }
+  }, [prompt])
+
+  if (loading) {
+    return (
+      <div style={{
+        width: '100%', height: 220, borderRadius: 'var(--radius-s)',
+        background: 'linear-gradient(135deg, rgba(168,85,247,0.08), rgba(59,130,246,0.08))',
+        border: '2px dashed rgba(168,85,247,0.3)',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        gap: '0.5rem', color: 'var(--c-muted)', fontSize: '0.85rem',
+      }}>
+        <div style={{ fontSize: '2rem', animation: 'float 1.5s ease-in-out infinite' }}>🎨</div>
+        <div>מייצר/ת איור...</div>
+        <div style={{ fontSize: '0.72rem', opacity: 0.6, textAlign: 'center', maxWidth: 200 }}>
+          Imagen AI עובד/ת על האיור
+        </div>
+      </div>
+    )
+  }
+
+  if (src && !failed) {
+    return (
+      <div style={{ width: '100%' }}>
+        <img
+          src={src}
+          alt={visual.alt}
+          style={{ width: '100%', borderRadius: 'var(--radius-s)', display: 'block', objectFit: 'cover', maxHeight: 280 }}
+        />
+        <p style={{ marginTop: '0.35rem', fontSize: '0.7rem', color: 'var(--c-muted)', textAlign: 'center', opacity: 0.7 }}>
+          🤖 נוצר ע"י Imagen AI
+        </p>
+      </div>
+    )
+  }
+
+  // Fallback: Unsplash
   const query = encodeURIComponent(visual.searchQuery || visual.alt || 'artificial intelligence')
   return (
     <div style={{ width: '100%' }}>
