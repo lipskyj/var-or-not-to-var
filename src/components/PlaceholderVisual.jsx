@@ -57,19 +57,21 @@ function AIIllustration({ visual }) {
 
   const [src, setSrc] = useState(cached || null)
   const [loading, setLoading] = useState(!cached && !!prompt)
-  const [failed, setFailed] = useState(false)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     if (!prompt || cached) return
     let live = true
     setLoading(true)
+    setError(null)
     generateImage(prompt)
       .then(dataUrl => {
         imgCache.set(prompt, dataUrl)
         if (live) { setSrc(dataUrl); setLoading(false) }
       })
-      .catch(() => {
-        if (live) { setFailed(true); setLoading(false) }
+      .catch(err => {
+        console.error('generateImage failed:', err.message)
+        if (live) { setError(err.message); setLoading(false) }
       })
     return () => { live = false }
   }, [prompt])
@@ -92,7 +94,7 @@ function AIIllustration({ visual }) {
     )
   }
 
-  if (src && !failed) {
+  if (src && !error) {
     return (
       <div style={{ width: '100%' }}>
         <img
@@ -107,10 +109,15 @@ function AIIllustration({ visual }) {
     )
   }
 
-  // Fallback: Unsplash
+  // Show error + Unsplash fallback
   const query = encodeURIComponent(visual.searchQuery || visual.alt || 'artificial intelligence')
   return (
     <div style={{ width: '100%' }}>
+      {error && (
+        <div style={{ fontSize: '0.7rem', color: '#f87171', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: 'var(--radius-s)', padding: '0.3rem 0.5rem', marginBottom: '0.4rem', direction: 'ltr', wordBreak: 'break-all' }}>
+          ⚠️ Image gen error: {error}
+        </div>
+      )}
       <img
         src={`https://source.unsplash.com/800x400/?${query}`}
         alt={visual.alt}

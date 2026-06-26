@@ -1,7 +1,7 @@
 const KEY = import.meta.env.VITE_GEMINI_API_KEY
 const BASE = 'https://generativelanguage.googleapis.com/v1beta/models'
 const URL = `${BASE}/gemini-2.0-flash:generateContent?key=${KEY}`
-const IMG_URL = `${BASE}/imagen-3.0-generate-004:predict?key=${KEY}`
+const IMG_URL = `${BASE}/gemini-2.0-flash-preview-image-generation:generateContent?key=${KEY}`
 
 export async function askGemini(userPrompt, { system = '', maxTokens = 120, temperature = 0.8 } = {}) {
   const body = {
@@ -30,18 +30,19 @@ export async function generateImage(prompt) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      instances: [{ prompt }],
-      parameters: { sampleCount: 1 },
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { responseModalities: ['IMAGE'] },
     }),
   })
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    throw new Error(err?.error?.message || `Imagen ${res.status}`)
+    throw new Error(err?.error?.message || `Gemini Image ${res.status}`)
   }
 
   const data = await res.json()
-  const pred = data.predictions?.[0]
-  if (!pred?.bytesBase64Encoded) throw new Error('No image returned')
-  return `data:${pred.mimeType || 'image/png'};base64,${pred.bytesBase64Encoded}`
+  const parts = data.candidates?.[0]?.content?.parts || []
+  const img = parts.find(p => p.inlineData)
+  if (!img?.inlineData?.data) throw new Error('No image in response')
+  return `data:${img.inlineData.mimeType || 'image/jpeg'};base64,${img.inlineData.data}`
 }
