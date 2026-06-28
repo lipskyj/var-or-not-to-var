@@ -38,7 +38,7 @@ export default function SketchGuessGame({ onComplete }) {
   const initCanvas = (canvas) => {
     if (!canvas) return
     const ctx = canvas.getContext('2d')
-    ctx.fillStyle = '#0f0f1a'
+    ctx.fillStyle = '#ffffff'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
   }
 
@@ -57,7 +57,7 @@ export default function SketchGuessGame({ onComplete }) {
     ctx.beginPath()
     ctx.moveTo(lastPos.x, lastPos.y)
     ctx.lineTo(pos.x, pos.y)
-    ctx.strokeStyle = '#e879f9'
+    ctx.strokeStyle = '#1e1b4b'
     ctx.lineWidth = 5
     ctx.lineCap = 'round'
     ctx.lineJoin = 'round'
@@ -70,7 +70,7 @@ export default function SketchGuessGame({ onComplete }) {
   const clearCanvas = () => {
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
-    ctx.fillStyle = '#0f0f1a'
+    ctx.fillStyle = '#ffffff'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
   }
 
@@ -170,7 +170,7 @@ export default function SketchGuessGame({ onComplete }) {
         style={{
           width: '100%', maxWidth: 300, height: 220, display: 'block', margin: '0 auto 0.75rem',
           borderRadius: 'var(--radius-s)', border: '2px solid var(--c-border)',
-          background: '#0f0f1a', cursor: 'crosshair', touchAction: 'none',
+          background: '#ffffff', cursor: 'crosshair', touchAction: 'none',
         }}
         onPointerDown={startDraw}
         onPointerMove={onDraw}

@@ -225,31 +225,21 @@ const unit2 = {
     steps: [
       {
         id: 'p1',
-        instruction: 'עבור/י לאתר quickdraw.withgoogle.com . זהו מסווג ציורים של גוגל. ציר/י משהו.',
-        action: 'confirm',
-        confirmLabel: 'ניסיתי ✓',
-        helpKey: 'quickdraw',
+        instruction: 'ציר/י ואפשר ל-AI לנחש — זהו מסווג ציורים. שים/י לב: מה ה-AI מצליח לנחש ומה מבלבל אותו?',
+        action: 'game',
+        gameComponent: 'SketchGuessGame',
       },
       {
         id: 'p2',
-        instruction: 'ה-AI ניחש את הציור שלך? מה הוא חשב? כתוב/י מה ציירת ומה הוא ניחש.',
+        instruction: 'כתוב/י מה ציירת ומה ה-AI ניחש. מה עזר לו לנחש נכון? מה בלבל אותו?',
         action: 'text',
-        placeholder: 'ציירתי ___ וה-AI חשב שזה ___',
-        helpKey: null,
+        placeholder: 'ציירתי ___ וה-AI חשב שזה ___ כי...',
       },
       {
         id: 'p3',
-        instruction: 'עכשיו נסה/י Google Translate: תרגם/י את המשפט "הכלב שלי אוהב לרוץ בפארק". שנה/י "כלב" ל"חתול" ונסה/י שוב.',
-        action: 'confirm',
-        confirmLabel: 'ניסיתי ✓',
-        helpKey: null,
-      },
-      {
-        id: 'p4',
-        instruction: 'לפי דעתך — האם Quick Draw ו-Google Translate הם אותו סוג מודל? כתוב/י מה ההבדל.',
+        instruction: 'חשוב/י על מתרגם שפה (כמו Google Translate): כשמשנים מילה אחת במשפט, כל התרגום יכול להשתנות. למה? מה שונה בין מסווג ציורים למתרגם שפה?',
         action: 'text',
-        placeholder: 'לדעתי ההבדל הוא...',
-        helpKey: null,
+        placeholder: 'לדעתי ההבדל בין מסווג ציורים למתרגם שפה הוא...',
       },
     ],
   },
@@ -262,17 +252,7 @@ const unit2 = {
     placeholder: 'מודל 1: Quick Draw — מסווג ציורים. הוא יכול לנחש ציור אבל לא יכול לצייר בעצמו...',
   },
 
-  help: [
-    {
-      key: 'quickdraw',
-      title: 'לא נפתח?',
-      steps: [
-        'נסה/י בכרטיסייה חדשה: quickdraw.withgoogle.com',
-        'אם חסום — פנה/י למורה להשיג גישה.',
-        'אפשר גם לנסות: teachablemachine.withgoogle.com כחלופה.',
-      ],
-    },
-  ],
+  help: [],
 
   game: null,
 }
@@ -362,31 +342,16 @@ const unit3 = {
     steps: [
       {
         id: 'p1',
-        instruction: 'פתח/י Teachable Machine: teachablemachine.withgoogle.com. צור/י מודל "Image Project" עם 2 קטגוריות: ✊ אגרוף ו-✋ יד פתוחה. הוסף/י 5 דוגמאות בלבד לכל קטגוריה.',
-        action: 'confirm',
-        confirmLabel: 'יצרתי מודל עם 5 דוגמאות ✓',
-        helpKey: 'teachable',
+        instruction: 'לחץ/י על כל מחווה כדי "לצלם" דוגמאות — התחל/י עם מעט, אמן/י, ואז הוסף/י הרבה יותר וראה/י מה קורה לדיוק.',
+        action: 'game',
+        gameComponent: 'TeachableSim',
+        gameProps: { preset: 'gesture' },
       },
       {
         id: 'p2',
-        instruction: 'אמן/י את המודל (Train) ← בדוק/י (Preview). כתוב/י: כמה פעמים הוא טעה ב-30 שניות של בדיקה?',
+        instruction: 'מה השתנה בדיוק כשהוספת יותר דוגמאות? למה לדעתך?',
         action: 'text',
-        placeholder: 'הוא טעה ___ פעמים מתוך ___',
-        helpKey: null,
-      },
-      {
-        id: 'p3',
-        instruction: 'עכשיו הוסף/י עוד 25 דוגמאות לכל קטגוריה (סה"כ 30+). אמן/י שוב ← בדוק/י שוב.',
-        action: 'confirm',
-        confirmLabel: 'הוספתי ואימנתי מחדש ✓',
-        helpKey: 'teachable',
-      },
-      {
-        id: 'p4',
-        instruction: 'כמה פעמים הוא טעה עכשיו? כתוב/י: מה השתנה ולמה לדעתך?',
-        action: 'text',
-        placeholder: 'עכשיו הוא טועה פחות כי...',
-        helpKey: null,
+        placeholder: 'כשהוספתי יותר דוגמאות הדיוק עלה כי...',
       },
     ],
   },
@@ -399,17 +364,7 @@ const unit3 = {
     placeholder: 'כשהוספתי יותר נתוני אימון, המודל הצליח לזהות דפוסים טובים יותר ולכן הדיוק עלה...',
   },
 
-  help: [
-    {
-      key: 'teachable',
-      title: 'Teachable Machine לא עובד?',
-      steps: [
-        'פתח/י בכרטיסייה חדשה: teachablemachine.withgoogle.com',
-        'המצלמה לא עובדת? לחץ/י על 🔒 ליד הכתובת ← Camera ← Allow.',
-        'עדיין לא? בחר/י "Upload" והעלה/י תמונות מהגלריה.',
-      ],
-    },
-  ],
+  help: [],
 
   game: null,
 }
@@ -570,29 +525,31 @@ const unit5 = {
   practice: {
     intro: 'בנה/י מזהה הבעות פנים: 😊 שמח | 😐 ניטרלי | 😮 מופתע',
     steps: [
-      { id: 'p1', instruction: 'פתח/י את teachablemachine.withgoogle.com ולחץ/י "Get Started".', action: 'confirm', confirmLabel: 'פתחתי ✓', helpKey: 'site-access' },
-      { id: 'p2', instruction: 'בחר/י "Image Project" ← "Standard Image Model".', action: 'confirm', confirmLabel: 'בחרתי ✓', helpKey: null },
-      { id: 'p3', instruction: 'שנה/י שמות: Class 1 → שמח, Class 2 → ניטרלי. לחץ/י "Add a class" ← מופתע.', action: 'confirm', confirmLabel: 'שיניתי ✓', helpKey: null },
-      { id: 'p4', instruction: 'לכל קטגוריה: לחץ/י "Webcam" ← עשה/י הבעה ← "Hold to Record". יעד: 30+ דוגמאות לכל קטגוריה. 💡 הזז/י ראש בין צילומים!', action: 'confirm', confirmLabel: 'צילמתי 30+ לכל קטגוריה ✓', helpKey: 'camera' },
-      { id: 'p5', instruction: 'לחץ/י "Train Model" וחכה/י ~30 שניות. אל תסגור/י את הדף!', action: 'confirm', confirmLabel: 'המודל מוכן ✓', helpKey: null },
-      { id: 'p6', instruction: 'לחץ/י "Preview" ← הפנה/י מצלמה ← עשה/י כל הבעה. מה עבד? מה לא?', action: 'text', placeholder: 'מה שמת/ת לב?', helpKey: 'accuracy' },
+      {
+        id: 'p1',
+        instruction: 'לחץ/י על כל הבעה כדי "לצלם" דוגמאות לאימון. התחל/י עם מעט ← אמן/י ← ראה/י את הדיוק. אחר כך הוסף/י הרבה יותר.',
+        action: 'game',
+        gameComponent: 'TeachableSim',
+        gameProps: { preset: 'face' },
+      },
+      {
+        id: 'p2',
+        instruction: 'איזו הבעה הכי קשה למודל לזהות? למה לדעתך?',
+        action: 'text',
+        placeholder: 'המודל התבלבל הכי הרבה עם הבעת ___ כי...',
+      },
     ],
   },
 
   document: {
     question: 'תאר/י בשתיים–שלוש משפטים: מה שיפר / פגע בדיוק המודל שלך?',
     hint: 'השתמש/י במילים: דוגמאות, קטגוריה, מגוון',
-    artifactType: 'screenshot+reflection',
+    artifactType: 'reflection',
     requiredKeywords: ['דוגמאות', 'קטגוריה', 'מגוון'],
     placeholder: 'הוספתי יותר דוגמאות לקטגוריה של מופתע ואז...',
-    screenshotLabel: 'צלם/י מסך של Preview עם שמות הקטגוריות ואחוזי הביטחון',
   },
 
-  help: [
-    { key: 'site-access', title: 'האתר לא נפתח?', steps: ['ודא/י חיבור לאינטרנט.', 'נסה/י כרטיסייה חדשה: teachablemachine.withgoogle.com', 'חסום ברשת? שאל/י את המורה.'] },
-    { key: 'camera', title: 'המצלמה לא עובדת?', steps: ['לחץ/י 🔒 ליד הכתובת ← Camera ← Allow.', 'רענן/י (F5) ← נסה/י שוב.', 'לא עובד? בחר/י "Upload" והעלה/י תמונות מהטלפון.'] },
-    { key: 'accuracy', title: 'המודל מתבלבל?', steps: ['בדוק/י: כמה דוגמאות לכל קטגוריה? (צריך ~30 שוות)', 'הגזים/י בהבעות — שמח = חייך גדול, מופתע = פה פתוח.', 'מחק/י דוגמאות לא-ברורות ← אמן/י שוב.'] },
-  ],
+  help: [],
 
   game: { component: 'TrainingSim', location: 'see' },
 }

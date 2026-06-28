@@ -2,8 +2,10 @@ import { useState } from 'react'
 import HelpDrawer from '../HelpDrawer.jsx'
 import EmbeddingsMap from '../games/EmbeddingsMap.jsx'
 import WordArenaGame from '../games/WordArenaGame.jsx'
+import TeachableSim from '../games/TeachableSim.jsx'
+import SketchGuessGame from '../games/SketchGuessGame.jsx'
 
-const PRACTICE_GAME_MAP = { EmbeddingsMap, WordArenaGame }
+const PRACTICE_GAME_MAP = { EmbeddingsMap, WordArenaGame, TeachableSim, SketchGuessGame }
 
 // ── Quiz step sub-component ────────────────────────────────────────────────────
 function QuizStep({ items, answers, onAnswer }) {
@@ -129,7 +131,8 @@ export default function PracticePhase({ practice, help, onComplete }) {
 
             {step.action === 'game' && step.gameComponent && (() => {
               const GameComp = PRACTICE_GAME_MAP[step.gameComponent]
-              return GameComp ? <GameComp onComplete={() => setGameComplete(true)} /> : null
+              const gProps = step.gameProps || {}
+              return GameComp ? <GameComp {...gProps} onComplete={() => setGameComplete(true)} /> : null
             })()}
           </div>
 
