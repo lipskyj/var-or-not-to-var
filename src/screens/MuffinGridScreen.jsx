@@ -79,7 +79,7 @@ export default function MuffinGridScreen({ onBack }) {
         }}>
           {/* ── The actual viral muffin/chihuahua image ── */}
           <img
-            src="/muffin-chihuahua.jpg"
+            src="/muffin-chihuahua.png"
             alt="מאפה או כלבלב — תמונה וויראלית"
             style={{ width: '100%', display: 'block' }}
             draggable={false}
