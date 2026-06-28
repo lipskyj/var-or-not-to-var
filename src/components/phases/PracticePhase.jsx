@@ -117,12 +117,29 @@ export default function PracticePhase({ practice, help, onComplete }) {
             )}
 
             {step.action === 'text' && (
-              <textarea
-                rows={4}
-                placeholder={step.placeholder}
-                value={textVal}
-                onChange={e => setTextVal(e.target.value)}
-              />
+              <>
+                <textarea
+                  rows={4}
+                  placeholder="הקלד/י כאן..."
+                  value={textVal}
+                  onChange={e => setTextVal(e.target.value)}
+                />
+                {step.placeholder && (
+                  <div style={{
+                    marginTop: '0.5rem',
+                    padding: '0.6rem 0.85rem',
+                    background: 'var(--c-primary-l)',
+                    border: '1px dashed rgba(168,85,247,0.35)',
+                    borderRadius: 'var(--radius-s)',
+                    fontSize: '0.8rem',
+                    color: 'var(--c-muted)',
+                    lineHeight: 1.7,
+                    direction: 'rtl',
+                  }}>
+                    💡 <strong style={{ color: 'var(--c-primary)' }}>תבנית:</strong> {step.placeholder}
+                  </div>
+                )}
+              </>
             )}
 
             {step.action === 'quiz' && step.quiz && (
