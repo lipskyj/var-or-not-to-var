@@ -4,10 +4,11 @@ import { getProgress, getSubmissions, resetAll } from './storage.js'
 import HomeScreen from './screens/HomeScreen.jsx'
 import GalleryScreen from './screens/GalleryScreen.jsx'
 import JournalScreen from './screens/JournalScreen.jsx'
+import MuffinGridScreen from './screens/MuffinGridScreen.jsx'
 import UnitShell from './components/UnitShell.jsx'
 
 // ── App-level navigation screens ──────────────────────────────────────────────
-const SCREENS = { home: 'home', gallery: 'gallery', journal: 'journal', unit: 'unit' }
+const SCREENS = { home: 'home', gallery: 'gallery', journal: 'journal', unit: 'unit', muffin: 'muffin' }
 
 export default function App() {
   const [screen, setScreen] = useState(SCREENS.home)
@@ -44,6 +45,7 @@ export default function App() {
               <button className="nav-link" onClick={() => setScreen(SCREENS.home)}>קורס</button>
               <button className="nav-link" onClick={() => setScreen(SCREENS.gallery)}>גלריה</button>
               <button className="nav-link" onClick={() => setScreen(SCREENS.journal)}>היומן שלי</button>
+              <button className="nav-link" onClick={() => setScreen(SCREENS.muffin)}>🧁🐶</button>
             </div>
           </div>
         </nav>
@@ -64,6 +66,10 @@ export default function App() {
 
       {screen === SCREENS.journal && (
         <JournalScreen submissions={submissions} />
+      )}
+
+      {screen === SCREENS.muffin && (
+        <MuffinGridScreen onBack={goHome} />
       )}
 
       {screen === SCREENS.unit && activeUnit && (
