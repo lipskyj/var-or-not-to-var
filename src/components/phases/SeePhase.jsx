@@ -18,8 +18,10 @@ import WordSort from '../games/WordSort.jsx'
 import SketchGuessGame from '../games/SketchGuessGame.jsx'
 import WordArenaGame from '../games/WordArenaGame.jsx'
 import SelectionSim from '../games/SelectionSim.jsx'
+import QuickDrawGallery from '../games/QuickDrawGallery.jsx'
+import TeachableSim from '../games/TeachableSim.jsx'
 
-const GAME_MAP = { TrainingSim, GuessNextWord, EmbeddingsMap, PromptSandbox, HallucinationSpot, DragMatchGame, SentimentMeter, AIorNotQuiz, PromptBuilder, AIQuizShow, TokenizerLab, BiasSwap, PromptArena, DataSwipe, WordSort, SketchGuessGame, WordArenaGame, SelectionSim }
+const GAME_MAP = { TrainingSim, GuessNextWord, EmbeddingsMap, PromptSandbox, HallucinationSpot, DragMatchGame, SentimentMeter, AIorNotQuiz, PromptBuilder, AIQuizShow, TokenizerLab, BiasSwap, PromptArena, DataSwipe, WordSort, SketchGuessGame, WordArenaGame, SelectionSim, QuickDrawGallery, TeachableSim }
 
 export default function SeePhase({ see, onComplete }) {
   const [gameComplete, setGameComplete] = useState(!see.gameComponent)
@@ -78,7 +80,8 @@ export default function SeePhase({ see, onComplete }) {
         <div className="obs-visual" style={{ padding: obs.visual?.type === 'youtube' ? '0' : undefined, border: obs.visual?.type === 'youtube' || obs.visual?.type === 'mini-game' ? 'none' : undefined, background: obs.visual?.type === 'youtube' || obs.visual?.type === 'mini-game' ? 'transparent' : undefined }}>
           {obs.visual?.type === 'mini-game' ? (() => {
             const MiniGame = GAME_MAP[obs.visual.gameComponent]
-            return MiniGame ? <MiniGame onComplete={() => {}} /> : null
+            const mgProps = obs.visual.gameProps || {}
+            return MiniGame ? <MiniGame {...mgProps} onComplete={() => {}} /> : null
           })() : <PlaceholderVisual visual={obs.visual} />}
         </div>
 
