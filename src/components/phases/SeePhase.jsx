@@ -20,8 +20,10 @@ import WordArenaGame from '../games/WordArenaGame.jsx'
 import SelectionSim from '../games/SelectionSim.jsx'
 import QuickDrawGallery from '../games/QuickDrawGallery.jsx'
 import TeachableSim from '../games/TeachableSim.jsx'
+import MuffinOrDog from '../games/MuffinOrDog.jsx'
+import BiasDemo from '../games/BiasDemo.jsx'
 
-const GAME_MAP = { TrainingSim, GuessNextWord, EmbeddingsMap, PromptSandbox, HallucinationSpot, DragMatchGame, SentimentMeter, AIorNotQuiz, PromptBuilder, AIQuizShow, TokenizerLab, BiasSwap, PromptArena, DataSwipe, WordSort, SketchGuessGame, WordArenaGame, SelectionSim, QuickDrawGallery, TeachableSim }
+const GAME_MAP = { TrainingSim, GuessNextWord, EmbeddingsMap, PromptSandbox, HallucinationSpot, DragMatchGame, SentimentMeter, AIorNotQuiz, PromptBuilder, AIQuizShow, TokenizerLab, BiasSwap, PromptArena, DataSwipe, WordSort, SketchGuessGame, WordArenaGame, SelectionSim, QuickDrawGallery, TeachableSim, MuffinOrDog, BiasDemo }
 
 export default function SeePhase({ see, onComplete }) {
   const [gameComplete, setGameComplete] = useState(!see.gameComponent)
