@@ -1,11 +1,11 @@
 const KEY = import.meta.env.VITE_GEMINI_API_KEY
-const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${KEY}`
+const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${KEY}`
 
 export async function askGemini(userPrompt, { system = '', maxTokens = 120, temperature = 0.8 } = {}) {
   const body = {
     ...(system && { system_instruction: { parts: [{ text: system }] } }),
     contents: [{ parts: [{ text: userPrompt }] }],
-    generationConfig: { maxOutputTokens: maxTokens, temperature },
+    generationConfig: { maxOutputTokens: maxTokens, temperature, thinkingConfig: { thinkingBudget: 0 } },
   }
 
   const res = await fetch(URL, {
@@ -26,7 +26,7 @@ export async function askGemini(userPrompt, { system = '', maxTokens = 120, temp
 export async function askGeminiVision(text, imageBase64, mimeType = 'image/png') {
   const body = {
     contents: [{ parts: [{ text }, { inlineData: { mimeType, data: imageBase64 } }] }],
-    generationConfig: { maxOutputTokens: 80, temperature: 0.2 },
+    generationConfig: { maxOutputTokens: 80, temperature: 0.2, thinkingConfig: { thinkingBudget: 0 } },
   }
   const res = await fetch(URL, {
     method: 'POST',
