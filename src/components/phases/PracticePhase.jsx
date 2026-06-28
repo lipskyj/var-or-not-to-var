@@ -1,5 +1,9 @@
 import { useState } from 'react'
 import HelpDrawer from '../HelpDrawer.jsx'
+import EmbeddingsMap from '../games/EmbeddingsMap.jsx'
+import WordArenaGame from '../games/WordArenaGame.jsx'
+
+const PRACTICE_GAME_MAP = { EmbeddingsMap, WordArenaGame }
 
 // ── Quiz step sub-component ────────────────────────────────────────────────────
 function QuizStep({ items, answers, onAnswer }) {
@@ -40,6 +44,7 @@ export default function PracticePhase({ practice, help, onComplete }) {
   const [textVal, setTextVal]     = useState('')
   const [confirmed, setConfirmed] = useState(false)
   const [quizAnswers, setQuizAnswers] = useState({})
+  const [gameComplete, setGameComplete] = useState(false)
   const [activeHelp, setActiveHelp]  = useState(null)
 
   const steps = practice.steps
@@ -55,12 +60,14 @@ export default function PracticePhase({ practice, help, onComplete }) {
     step.action === 'confirm' ? confirmed :
     step.action === 'text'    ? textVal.trim().length > 0 :
     step.action === 'quiz'    ? quizComplete :
+    step.action === 'game'    ? gameComplete :
     true
 
   const advance = () => {
     setConfirmed(false)
     setTextVal('')
     setQuizAnswers({})
+    setGameComplete(false)
     if (isLast) { onComplete({ lastText: textVal }); return }
     setStepIdx(i => i + 1)
   }
@@ -119,6 +126,11 @@ export default function PracticePhase({ practice, help, onComplete }) {
             {step.action === 'quiz' && step.quiz && (
               <QuizStep items={step.quiz} answers={quizAnswers} onAnswer={answerQuiz} />
             )}
+
+            {step.action === 'game' && step.gameComponent && (() => {
+              const GameComp = PRACTICE_GAME_MAP[step.gameComponent]
+              return GameComp ? <GameComp onComplete={() => setGameComplete(true)} /> : null
+            })()}
           </div>
 
           {step.helpKey && (

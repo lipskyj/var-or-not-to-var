@@ -500,47 +500,34 @@ const unit4 = {
     steps: [
       {
         id: 'p1',
-        instruction: 'פתח/י את projector.tensorflow.org (Google\'s Word Embedding Visualizer). לחץ/י "Load" ← "Word2Vec 10K".',
-        action: 'confirm',
-        confirmLabel: 'פתחתי ✓',
-        helpKey: 'tensorflow',
+        instruction: 'שחק/י את משחק מפת המשמעות — בחר/י כל פעם איזו מילה קרובה יותר לעוגן.',
+        action: 'game',
+        gameComponent: 'EmbeddingsMap',
       },
       {
         id: 'p2',
-        instruction: 'בחיפוש הקלד/י "king" ← לחץ/י Enter. ראה/י את המילים הקרובות ביותר. מה 3 המילים הקרובות ביותר?',
+        instruction: 'איזה זוג מילים הפתיע אותך? למה הן קרובות ב-embedding לדעתך?',
         action: 'text',
-        placeholder: '3 המילים הקרובות ל-king: ...',
-        helpKey: null,
+        placeholder: 'הופתעתי ש-___ ו-___ קרובים כי...',
       },
       {
         id: 'p3',
-        instruction: 'עכשיו חפש/י מילה שאתה/ן בוחר/ת. מה הפתיע אותך ברשימת המילים הקרובות?',
+        instruction: 'חשוב/י על זוג מילים שלדעתך קרובות מאוד ב-embedding. מה זה אומר על האופן שבו AI "מבין" שפה?',
         action: 'text',
-        placeholder: 'חיפשתי ___ והופתעתי שקרוב אליה ___',
-        helpKey: 'tensorflow',
+        placeholder: 'לדעתי ___ ו-___ קרובים כי... זה אומר על AI ש...',
       },
     ],
   },
 
   document: {
     question: 'תאר/י זוג מילים שהפתיע אותך — למה הן קרובות ב-embedding? מה זה אומר על "הבנת" ה-AI?',
-    hint: 'השתמש/י במילים: embedding, מרחק, משמעות',
+    hint: 'השתמש/י במילים: embedding, מרחב, משמעות',
     artifactType: 'reflection',
-    requiredKeywords: ['embedding', 'מרחק', 'משמעות'],
+    requiredKeywords: ['embedding', 'מרחב', 'משמעות'],
     placeholder: 'גיליתי ש-___ ו-___ קרובים ב-embedding. זה מפתיע כי...',
   },
 
-  help: [
-    {
-      key: 'tensorflow',
-      title: 'האתר לא נפתח?',
-      steps: [
-        'נסה/י: projector.tensorflow.org',
-        'אם חסום — נסה/י: word2vec.kr (חלופה בדפדפן)',
-        'גם זה חסום? עבוד/י עם הגרסה המובנית של הקורס (המפה שראית).',
-      ],
-    },
-  ],
+  help: [],
 
   game: null,
 }
