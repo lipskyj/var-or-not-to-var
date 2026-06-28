@@ -47,6 +47,8 @@ export default function PracticePhase({ practice, help, onComplete }) {
   const [confirmed, setConfirmed] = useState(false)
   const [quizAnswers, setQuizAnswers] = useState({})
   const [gameComplete, setGameComplete] = useState(false)
+  const [launched, setLaunched]   = useState(false)
+  const [launchDone, setLaunchDone] = useState(false)
   const [activeHelp, setActiveHelp]  = useState(null)
 
   const steps = practice.steps
@@ -59,10 +61,11 @@ export default function PracticePhase({ practice, help, onComplete }) {
     : false
 
   const canAdvance =
-    step.action === 'confirm' ? confirmed :
-    step.action === 'text'    ? textVal.trim().length > 0 :
-    step.action === 'quiz'    ? quizComplete :
-    step.action === 'game'    ? gameComplete :
+    step.action === 'confirm'      ? confirmed :
+    step.action === 'text'         ? textVal.trim().length > 0 :
+    step.action === 'quiz'         ? quizComplete :
+    step.action === 'game'         ? gameComplete :
+    step.action === 'launch-task'  ? launchDone :
     true
 
   const advance = () => {
@@ -70,6 +73,8 @@ export default function PracticePhase({ practice, help, onComplete }) {
     setTextVal('')
     setQuizAnswers({})
     setGameComplete(false)
+    setLaunched(false)
+    setLaunchDone(false)
     if (isLast) { onComplete({ lastText: textVal }); return }
     setStepIdx(i => i + 1)
   }
@@ -151,6 +156,38 @@ export default function PracticePhase({ practice, help, onComplete }) {
               const gProps = step.gameProps || {}
               return GameComp ? <GameComp {...gProps} onComplete={() => setGameComplete(true)} /> : null
             })()}
+
+            {step.action === 'launch-task' && (
+              <div>
+                {step.instructions && (
+                  <ol style={{ paddingRight: '1.5rem', lineHeight: 2.1, color: 'var(--c-text)', fontSize: '0.9rem', marginBottom: '1rem' }}>
+                    {step.instructions.map((inst, i) => (
+                      <li key={i} style={{ marginBottom: '0.25rem' }}>{inst}</li>
+                    ))}
+                  </ol>
+                )}
+                <a
+                  href={step.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-primary btn-lg"
+                  style={{ display: 'block', textAlign: 'center', textDecoration: 'none', marginBottom: '0.75rem' }}
+                  onClick={() => setLaunched(true)}
+                >
+                  {step.launchLabel || 'פתח/י כלי ↗'}
+                </a>
+                {launched && !launchDone && (
+                  <button className="btn btn-outline btn-lg" style={{ width: '100%' }} onClick={() => setLaunchDone(true)}>
+                    {step.doneLabel || '✅ סיימתי את המשימה'}
+                  </button>
+                )}
+                {launchDone && (
+                  <div className="feedback-box feedback-success" style={{ textAlign: 'center', fontWeight: 700 }}>
+                    ✅ {step.successText || 'מצוין! המשך ←'}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {step.helpKey && (

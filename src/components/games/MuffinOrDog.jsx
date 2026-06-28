@@ -63,11 +63,62 @@ function PollinationsImg({ prompt, seed, style }) {
   )
 }
 
+// 2×2 intro grid — mimics the viral muffin/chihuahua meme format
+const INTRO_GRID = [
+  { prompt: 'chihuahua puppy face close-up, tan fur, big dark eyes, white background', seed: 2202 },
+  { prompt: 'single blueberry muffin close-up, golden brown top, dark blueberries, white background', seed: 1101 },
+  { prompt: 'blueberry muffin top view, warm brown surface, two dark round spots like eyes', seed: 3303 },
+  { prompt: 'chihuahua face close-up, round beige head, shiny dark eyes, studio lighting', seed: 4404 },
+]
+
+function IntroImg({ prompt, seed }) {
+  const [loaded, setLoaded] = useState(false)
+  const src = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=260&height=260&nologo=true&seed=${seed}`
+  return (
+    <div style={{ position: 'relative', aspectRatio: '1', borderRadius: 'var(--radius-s)', overflow: 'hidden', background: 'var(--c-bg)', border: '2px solid var(--c-border)' }}>
+      {!loaded && (
+        <div style={{ position: 'absolute', inset: 0, animation: 'shimmer 1.8s infinite', backgroundImage: 'linear-gradient(90deg,rgba(168,85,247,.06) 25%,rgba(168,85,247,.14) 50%,rgba(168,85,247,.06) 75%)', backgroundSize: '200% 100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ fontSize: '1.5rem' }}>🔄</span>
+        </div>
+      )}
+      <img src={src} alt={prompt} onLoad={() => setLoaded(true)} style={{ width: '100%', height: '100%', objectFit: 'cover', display: loaded ? 'block' : 'none' }} />
+    </div>
+  )
+}
+
 export default function MuffinOrDog({ onComplete }) {
+  const [phase, setPhase] = useState('intro')
   const [idx, setIdx] = useState(0)
   const [chosen, setChosen] = useState(null)
   const [score, setScore] = useState(0)
   const [done, setDone] = useState(false)
+
+  // ── Intro phase ───────────────────────────────────────────────────────────
+  if (phase === 'intro') {
+    return (
+      <div className="card" style={{ maxWidth: 460, margin: '0 auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+          <span style={{ fontSize: '1.3rem' }}>🤔</span>
+          <h3>מאפה או כלבלב?</h3>
+        </div>
+        <p style={{ color: 'var(--c-muted)', fontSize: '0.82rem', marginBottom: '0.75rem' }}>
+          הגרסה הזו הפכה לוויראלית — AI בלבל בין השניים. כמה כלבלבים רואים כאן?
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', marginBottom: '0.85rem' }}>
+          {INTRO_GRID.map(({ prompt, seed }) => (
+            <IntroImg key={seed} prompt={prompt} seed={seed} />
+          ))}
+        </div>
+        <div className="feedback-box feedback-warn" style={{ fontSize: '0.82rem', lineHeight: 1.6, marginBottom: '0.85rem' }}>
+          🤖 AI שאומן לזהות כלבלבים "ראה": <strong>חום + עגול + כתמים כהות</strong> — ובלבל בין השניים.
+          <br />עכשיו תורך — תהיה/י ה-AI!
+        </div>
+        <button className="btn btn-primary btn-lg" style={{ width: '100%' }} onClick={() => setPhase('quiz')}>
+          🐶 התחל/י את המשחק ←
+        </button>
+      </div>
+    )
+  }
 
   const round = ROUNDS[idx]
   const answered = chosen !== null
