@@ -19,7 +19,8 @@ Kala Yoga is a yoga teacher-training school. נעמה מזרחי runs admissions
    - Cloud: this file is the source of truth. If `analysis-prompt.md` has a newer focus point, the user must tell you or update §6.
 3. **Check connectors.** This flow needs **Google Drive, Google Docs, Google Sheets, Google Slides and Gmail**. If any is missing in this chat, stop and tell the user which one. Connectors added mid-chat only appear in a new chat.
 4. **Choose the mode** (ask if the request is unclear):
-   - `weekly`: new recordings from the current and previous month only. This is the default for a scheduled run.
+   - `watch`: the on-demand trigger, run several times a day by a routine. Process every **new** recording in the current and previous month folders (§1, "Month folders"): transcribe, write the doc and analysis, add the sheet row. **No deck, no email.** If nothing is new, end quietly with one line.
+   - `weekly`: the weekly report. First run `watch` (to catch anything not yet processed). Then build the deck and email from **every call whose "דווח לשני" cell is empty** (§7). This covers calls from any week that were never reported. This is the default for the scheduled Sunday run.
    - `backfill`: every month folder from the start date the user gives (e.g. "from September"). It covers every recording that has no transcript doc yet.
    - `rebuild`: like `backfill`, but re-run the analysis, sheet rows, analysis doc and deck even for calls that already have a transcript. Never re-transcribe a call that already has a doc unless the user says so.
 5. **Sending:** in `weekly` (scheduled) mode, send the email. In `backfill` and `rebuild`, show the user a short summary, create a **Gmail draft**, and send only after the user confirms.
@@ -36,7 +37,11 @@ Kala Yoga is a yoga teacher-training school. נעמה מזרחי runs admissions
 | Summary analysis doc "שיחות מכירה – ניתוח ספטמבר–אוקטובר 2026" | `1Og38ExcW9kAOsqqEfop5m6f5q38aeu0ufeeOj_YEP7k` |
 | Deck "שיחות מכירה – למה דווקא קורס מורים?" | `1tnlSTj4BnoEs4EfC4pFTvqob4hzcf3G-rnTB7IV-PsY` |
 
-- New month folders are subfolders of the root. Find them with `search_files` using `parentId = '1G5Uod0lUKSlNK-otEp9IVym2JjoaH8nK'`.
+- **Month folders.** Each month is a subfolder of the root, named with the Hebrew month name: ינואר, פברואר, מרץ, אפריל, מאי, יוני, יולי, אוגוסט, ספטמבר, אוקטובר, נובמבר, דצמבר.
+  1. List the root's subfolders (`search_files`, `parentId = '1G5Uod0lUKSlNK-otEp9IVym2JjoaH8nK'`, `mimeType = 'application/vnd.google-apps.folder'`).
+  2. Pick the folders for the **current** month and the **previous** month, using Israel time (Asia/Jerusalem).
+  3. When the office opens a new month folder (e.g. נובמבר), it is picked up automatically on the next run. If the current month's folder doesn't exist yet, just use the previous month.
+  4. Loose files at the root (e.g. "4.5 רעות פילרסדורף") are old and out of scope.
 - **Out of scope:** the sibling folder "שיחה ראשונה" (`1Lgrddg8f7t1GG8as94v23keKqaf2p5Ne`) holds first-contact calls. Don't touch it unless asked.
 - **Recipient:** שני, `shani@kalayoga.co.il`, and nobody else.
 
@@ -49,8 +54,12 @@ For each month folder in scope:
 3. **Duplicates:** if two recordings have the **same `fileSize`**, they are the same recording uploaded twice under different names. Known case: "10.9 הדר ברגשטיין" and "10.9 ליאל טיסקר" are the same file, and the call is **ליאל טיסקר**. For any new duplicate, transcribe it once. Use the name the customer is called by in the recording, mention the duplicate in the doc header note, and tell the user.
    - If a call exists both as mp4 and as an audio copy (same title), it is one call. In the cloud, use the audio copy.
 4. If the customer's name in the recording differs from the file name, flag it in the doc and in the email. Don't silently rename.
-5. **Cloud only:** recordings over **10 MB** can't be downloaded here (connector limit, and the Drive web hosts are blocked). List them as "needs the PC or an audio copy" and continue with the rest. Never skip them silently.
-6. Show the user the list (to transcribe / already done / duplicates / too big for the cloud) before starting long work in `backfill` or `rebuild` mode.
+5. **Cloud only:** recordings over **10 MB** can't be downloaded here (connector limit, and the Drive web hosts are blocked). Never skip them silently.
+   - Add a **pending row** for them in the sheet (§7).
+   - Continue with the rest.
+   - The same goes for every recording when the ivrit-ai model can't be loaded (setup exit code 2).
+6. **New** means: a recording with no transcript doc of the same title **and** no row in the sheet (a pending row counts as "known"). A pending row is retried on every run. When it finally succeeds, replace the pending row with the full row.
+7. Show the user the list (to transcribe / already done / duplicates / too big for the cloud) before starting long work in `backfill` or `rebuild` mode.
 
 ## 3. Download
 
@@ -145,9 +154,17 @@ Append one row per call to `Untitled!A1` with `append_values`. Formulas are eval
 |---|---|---|---|---|---|---|---|---|---|
 | ספטמבר | 17.9 פלורה פאראן | `=HYPERLINK("https://docs.google.com/document/d/<docId>/edit","תמלול")` | `=HYPERLINK("https://drive.google.com/file/d/<mp4Id>/view","הקלטה")` | למה דווקא קורס מורים? | כן / לא / לא בטוח | short answer + (mm:ss) | short answer or – | short answer or – | לא בטוח – הנקודה הקודמת לא הוגדרה (until a previous point exists) |
 
+- **Column K "דווח לשני":** the date (dd.mm.yyyy) the call was included in an email to שני. Leave it empty when adding a row. The weekly report fills it (§11). An empty K means the call goes into the next report.
+- **Pending rows** (call known but not yet transcribed): fill A–E as usual and D = recording link, C = "–", F = "ממתין לתמלול", G = the reason (e.g. "הקובץ גדול מ-10MB – צריך את המחשב או עותק אודיו", or "אין גישה למודל התמלול (huggingface.co חסום)"), H–J = "–", K empty.
 - Rows are ordered newest first. Append at the bottom unless the user asks to re-sort.
 - Before appending, read the sheet and **skip calls that already have a row**. In `rebuild`, update the existing row in place with `update_values`.
 - PC only: also append any rows waiting in `C:\Users\lipsk\tools\whisper\pending-sheet-rows.csv`, then empty that file.
+
+## 7a. Which calls go into a report
+
+- `weekly`: **all rows with K empty and F ≠ "ממתין לתמלול"**, from any month. That includes calls from earlier weeks that were missed. This is the "not shown yet → next week" rule.
+- Pending rows are not analysed. Mention them in the email as a short list: "שיחות שממתינות לתמלול: …". Leave their K empty so they're picked up once transcribed.
+- If no rows qualify and none are pending, send the one-line "no new calls" note.
 
 ## 8. Summary analysis doc
 
@@ -213,7 +230,7 @@ Gmail, to `shani@kalayoga.co.il` only, HTML body with `dir="rtl"`, plus a plain-
 
 ## 11. Finish
 
-1. Record progress. On the PC, update the memory file. In the cloud, update the "Known history" section at the end of this file, commit and push, so the next session knows. Record:
+1. Record progress. **The tracking sheet is the source of truth** for which calls are done, pending and reported, so routine runs don't need to write anything else. On the PC, also update the memory file. Record there:
    - Calls done (date + name).
    - Duplicates and name fixes.
    - Links to the deck and summary doc.
@@ -222,15 +239,18 @@ Gmail, to `shani@kalayoga.co.il` only, HTML body with `dir="rtl"`, plus a plain-
    - Move the old point to "Previous points".
    - From then on, fill "חזרה נקודה קודמת?" by checking the previous point too.
    - Start a new summary doc and deck for the new point.
-3. Report to the user in a few lines: what was transcribed, what was skipped and why, and the links.
+3. **After the email was sent** (weekly): write today's date (dd.mm.yyyy) into column K of every row included in it. Do this only after `send_message` succeeds, so a failed send doesn't hide calls from the next report.
+4. Report in a few lines: what was transcribed, what is pending and why, and the links. In a routine run, put this in the final message so it shows in the notification.
 
-## Known history (as of 2026-10-12)
+## Known history (as of 2026-10-13)
 
-- **Done (transcript + analysis + sheet row):**
+- **Reported to שני on 11.10** (K = 11.10.2026):
   - October: 5.10 ליטל, 5.10 עמית, 6.10 יוליה, 6.10 אביגיל.
   - September: 10.9 ליאל (file also named "10.9 הדר ברגשטיין"), 17.9 פלורה, 27.9 עינאל, 28.9 יסמין, 30.9 אגם (start of the call not recorded).
+- **New in October, not yet transcribed (as of 13.10):** 12.10 גפן צהר (17.5 MB), 12.10 שיר אבנעים (14.1 MB), 13.10 גילי גיל (12.3 MB).
 - **Not yet transcribed (שיחת מכירה › ספטמבר):** 2.9 עדי רודן, 3.9 מעיין נחמני, 7.9 ניר ישראל, 7.9 שיר שמש, 9.9 הדר ברגשטיין (probably הדר's real call), 10.9 איילת שחר, 14.9 אורית מירזאי, 17.9 אלה סיפלינגר, 17.9 אביגיל כותב אמת, 23.9 שיר יעקב, 24.9 מוריה גרינפלד, 24.9 רותם בדיחי.
-  - All 12 are mp4s of 10–18 MB, so they can't be downloaded in the cloud. Transcribe them on the PC, or ask the office to upload audio copies under 10 MB.
-- **Sent to שני (11.10):** the deck and the email. That email named "הדר" among the good examples; the next email should say it was ליאל.
-- **Scheduled task (PC):** `weekly-sales-call-coaching-report` (Sundays 07:00). Its prompt can be replaced with: "Run the sales-call-coaching skill in weekly mode."
-- **Cloud status:** speaker separation and the Drive download were tested in a cloud session on 12.10. The ivrit-ai model was not, because huggingface.co was still blocked. The first cloud run should transcribe one call and have the user spot-check it before doing the rest.
+  - September is the previous month only until 31.10, so `watch` stops seeing it in November. Process it with `backfill` before then.
+- All the recordings above are mp4s of 10–18 MB, so they can't be downloaded in the cloud. Transcribe them on the PC, or ask the office to upload audio copies under 10 MB.
+- The 11.10 email named "הדר" among the good examples. The next email should say it was ליאל.
+- **Scheduled task (PC):** `weekly-sales-call-coaching-report` (Sundays 07:00) duplicates the cloud weekly routine. Keep only one of them, or שני gets two emails.
+- **Cloud status:** speaker separation and the Drive download were tested in a cloud session on 12.10. The ivrit-ai model was not, because huggingface.co was still blocked. The first cloud run that can transcribe should do one call and have the user spot-check it.
